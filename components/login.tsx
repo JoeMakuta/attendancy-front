@@ -74,12 +74,12 @@ const Login = () => {
         >
           Login
         </button>
-        <p className=" flex gap-2 text-base">
+        {/* <p className=" flex gap-2 text-base">
           <p>{"Don't have an account ?"}</p>
           <button type="button" className="text-main_color font-bold ">
             Signup
           </button>
-        </p>
+        </p> */}
         <div className=" flex justify-center  ">
           <p className=" text-main_color cursor-pointer">Forgot password?</p>
         </div>
