@@ -72,7 +72,7 @@ const Login = () => {
           type="submit"
           className=" w-full text-base h-10 rounded-lg bg-main_color hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black "
         >
-          Login
+          Se connecter
         </button>
         {/* <p className=" flex gap-2 text-base">
           <p>{"Don't have an account ?"}</p>
