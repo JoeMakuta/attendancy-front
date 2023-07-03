@@ -9,7 +9,9 @@ import {
 import { FaRegUser } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { userState } from "@/recoil/atom";
 
 export const inputStyles =
   " h-12 p-3 w-[100%] bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#00FF51]/30 focus:ring-2 focus:shadow-[0px_0px_10px_1px_#00FF51] border-[1px] border-[#000]/10 transition-all flex justify-center items-center ";
@@ -17,6 +19,7 @@ export const inputStyles =
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [UserState, setUserState] = useRecoilState(userState);
 
   return (
     <form
@@ -40,6 +43,9 @@ const Login = () => {
             required={true}
             placeholder="Email"
             className={inputStyles}
+            onChange={(e) => {
+              setUserState({})
+            }}
           />
         </div>
         <div>

@@ -16,7 +16,7 @@ const Menu = () => {
   const path = usePathname();
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
   useEffect(() => {
-    console.log(path);
+    console.log(path.split("/"));
   });
   return (
     <div className="flex gap-7 text-sm text-white/50 justify-center items-center ">
@@ -26,7 +26,7 @@ const Menu = () => {
             href={elt.link}
             key={index}
             className={
-              selectedMenu === elt.name
+              path.includes(elt.name.toLocaleLowerCase())
                 ? " bg-main_color text-black/70  p-2 rounded-md"
                 : ""
             }
