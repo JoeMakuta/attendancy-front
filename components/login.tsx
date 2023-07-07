@@ -1,5 +1,5 @@
 "use client";
-
+import axios from "axios";
 import {
   AiFillEyeInvisible,
   AiFillEye,
@@ -9,7 +9,10 @@ import {
 import { FaRegUser } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { userState } from "@/recoil/atom";
+import { message } from "antd";
 
 export const inputStyles =
   " h-12 p-3 w-[100%] bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#00FF51]/30 focus:ring-2 focus:shadow-[0px_0px_10px_1px_#00FF51] border-[1px] border-[#000]/10 transition-all flex justify-center items-center ";
@@ -17,12 +20,40 @@ export const inputStyles =
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [UserState, setUserState] = useRecoilState(userState);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { API_URL } = process.env;
+
+  const LoginUser = async () => {
+    console.log(email, password);
+    message.open({ key: "notification", type: "loading", content: "loading" });
+    try {
+      const Response = await axios.post(
+        "https://attendacy-api.onrender.com" + "/api/auth/login",
+        {
+          email: email,
+          password: password,
+        }
+      );
+    } catch (error) {
+      message.open({
+        key: "notification",
+        type: "error",
+        content: "error",
+      });
+    }
+    message.open({ key: "notification", type: "success", content: "Loaded" });
+
+    console.log(Response);
+  };
 
   return (
     <form
       className=" backdrop-blur-md text-center  shadow-gray-400  h-fit text-xs rounded-3xl flex items-center justify-around flex-col gap-4 max-w-[400px] transition-all w "
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
+        await LoginUser();
       }}
     >
       <div className="flex flex-col justify-center items-center  pt-0 gap-3">
@@ -40,6 +71,9 @@ const Login = () => {
             required={true}
             placeholder="Email"
             className={inputStyles}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
           />
         </div>
         <div>
@@ -50,6 +84,9 @@ const Login = () => {
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               className={inputStyles + " min-w-full"}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
             />
             <button
               className="relative self-end bottom-[42px] right-4"
@@ -72,7 +109,7 @@ const Login = () => {
           type="submit"
           className=" w-full text-base h-10 rounded-lg bg-main_color hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black "
         >
-          Login
+          Se connecter
         </button>
         {/* <p className=" flex gap-2 text-base">
           <p>{"Don't have an account ?"}</p>
