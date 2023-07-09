@@ -1,6 +1,6 @@
 "use client";
 import axios, { AxiosResponse } from "axios";
-import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { AiFillEyeInvisible, AiFillEye, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useState } from "react";
 import { message } from "antd";
 import { IResponse, IUser } from "@/types/global";
@@ -13,15 +13,12 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const LoginUser = async () => {
-    message.open({
-      key: "notification",
-      type: "loading",
-      content: "Requette en cours",
-    });
-
+    setIsLoading(true)
     try {
+      
       const response: AxiosResponse<IResponse<IUser>> = await AxiosHelpers.post(
         {
           url: "/api/auth/login",
@@ -32,12 +29,15 @@ const Login = () => {
         }
       );
 
-      response &&
+      if(response)
+      {
+        setIsLoading(false)
         message.open({
           key: "notification",
           type: "success",
           content: response.data.message,
-        });
+        }) 
+      }
     } catch (error) {
       message.open({
         key: "notification",
@@ -104,9 +104,11 @@ const Login = () => {
       <div className=" flex flex-col justify-center items-center gap-5  w-full">
         <button
           type="submit"
-          className=" w-full text-base h-10 rounded-lg bg-main_color hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black "
+          className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg bg-main_color ${isLoading && 'bg-main_color/50'} hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
         >
-          Se connecter
+          <span>Se connecter</span> {
+            isLoading && <AiOutlineLoading3Quarters className="animate-spin"/>
+          } 
         </button>
         <div className=" flex justify-center  ">
           <p className=" text-main_color cursor-pointer">
