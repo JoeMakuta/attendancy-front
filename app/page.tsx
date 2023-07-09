@@ -3,7 +3,7 @@ import Signup from "@/components/signup";
 import Image from "next/image";
 
 export const metadata = {
-  title: "Attendancy App",
+  title: "Attendancy",
   description: "Welcom to the attendacy app",
 };
 export default function Home() {

@@ -4,7 +4,7 @@ import { Loadable, RecoilValue, WrappedValue, atom } from "recoil";
 export const currentUserState = atom<
   IUser
 >({
-  key: "userState",
+  key: "currentUserState",
   default: {
     accessToken: "",
     user: { id: "", name: "", email: "", password: "" },
