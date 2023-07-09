@@ -1,42 +1,52 @@
 "use client";
-import axios, { AxiosResponse } from "axios";
-import { AiFillEyeInvisible, AiFillEye, AiOutlineLoading3Quarters } from "react-icons/ai";
+import { AxiosResponse } from "axios";
+import {
+  AiFillEyeInvisible,
+  AiFillEye,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { useState } from "react";
 import { message } from "antd";
 import { IResponse, IUser } from "@/types/global";
-import { AxiosHelpers } from "@/helpers/axios";
-
-export const inputStyles =
-  " h-12 p-3 w-[100%] bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#E5203D]/30 focus:ring  border-[1px] border-[#000]/10 transition-all flex justify-center items-center ";
+import { ApiClient } from "@/helpers/apiClinet";
+import { currentUserState } from "@/recoil/atoms/currentUser";
+import {
+  useSetRecoilState,
+} from "recoil";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const setCurrentUser = useSetRecoilState(currentUserState);
 
   const LoginUser = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      
-      const response: AxiosResponse<IResponse<IUser>> = await AxiosHelpers.post(
-        {
-          url: "/api/auth/login",
-          data: {
-            email,
-            password,
-          },
-        }
-      );
+      const response: AxiosResponse<IResponse<IUser>> = await ApiClient.post({
+        url: "/api/auth/login",
+        data: {
+          email,
+          password,
+        },
+      });
 
-      if(response)
-      {
-        setIsLoading(false)
+      if (response) {
+        setIsLoading(false);
         message.open({
           key: "notification",
           type: "success",
           content: response.data.message,
-        }) 
+        });
+
+        localStorage.setItem("user", JSON.stringify(response.data.data.user))
+        localStorage.setItem("accessToken", JSON.stringify(response.data.data.accessToken))
+
+        setCurrentUser({
+          accessToken: response.data.data.accessToken,
+          user: response.data.data.user,
+        });
       }
     } catch (error) {
       message.open({
@@ -68,7 +78,7 @@ const Login = () => {
             type="email"
             required={true}
             placeholder="Email"
-            className={inputStyles}
+            className="input-st"
             onChange={(e) => {
               setEmail(e.target.value);
             }}
@@ -80,7 +90,7 @@ const Login = () => {
               required={true}
               type={showPassword ? "text" : "password"}
               placeholder="Mot de pass"
-              className={inputStyles + " min-w-full"}
+              className=" min-w-full input-st"
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
@@ -104,11 +114,12 @@ const Login = () => {
       <div className=" flex flex-col justify-center items-center gap-5  w-full">
         <button
           type="submit"
-          className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg bg-main_color ${isLoading && 'bg-main_color/50'} hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
+          className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg bg-main_color ${
+            isLoading && "bg-main_color/50"
+          } hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
         >
-          <span>Se connecter</span> {
-            isLoading && <AiOutlineLoading3Quarters className="animate-spin"/>
-          } 
+          <span>Se connecter</span>{" "}
+          {isLoading && <AiOutlineLoading3Quarters className="animate-spin" />}
         </button>
         <div className=" flex justify-center  ">
           <p className=" text-main_color cursor-pointer">

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-export class AxiosHelpers {
+export class ApiClient {
   static baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   static get = async ({
