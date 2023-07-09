@@ -12,7 +12,7 @@ import { useState } from "react";
 const MyHeader = () => {
   const [showMenu, setShowMenu] = useState(false);
   return (
-    <section className="flex justify-between px-3 sm:px-10 max-w-[1500px] items-center h-[80px] md:h-[60px] min-h-[60px] bg-slate-800 w-full text-white fixed z-20">
+    <section className="flex bg-white   justify-between px-3 sm:px-10  items-center h-[80px] md:h-[80px] min-h-[60px] w-full text-black fixed z-20">
       <div>
         <Menu />
       </div>
