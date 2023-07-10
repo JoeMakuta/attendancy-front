@@ -8,11 +8,12 @@ import {
 import { useState } from "react";
 import { message } from "antd";
 import { IResponse, IUser } from "@/types/global";
-import { ApiClient } from "@/helpers/apiClinet";
+import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import {
   useSetRecoilState,
 } from "recoil";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +21,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const router = useRouter()
 
   const LoginUser = async () => {
     setIsLoading(true);
@@ -47,6 +49,8 @@ const Login = () => {
           accessToken: response.data.data.accessToken,
           user: response.data.data.user,
         });
+
+        router.push('/dashboard')
       }
     } catch (error) {
       message.open({

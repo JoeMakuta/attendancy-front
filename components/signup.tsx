@@ -1,6 +1,4 @@
 "use client";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { inputStyles } from "./login";
 import { useState } from "react";
 
 const Signup = () => {
@@ -25,7 +23,7 @@ const Signup = () => {
               type="text"
               required={true}
               placeholder="Noms"
-              className={inputStyles}
+              className="input-st"
             />
           </div>
           <div className=" flex flex-col gap-2 ">
@@ -34,7 +32,7 @@ const Signup = () => {
               type="email"
               required={true}
               placeholder="Email"
-              className={inputStyles}
+              className="input-st"
             />
           </div>
         </div>
