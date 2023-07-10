@@ -19,15 +19,15 @@ const Menu = () => {
     console.log(path.split("/"));
   });
   return (
-    <div className="flex gap-7 text-sm text-white/50 justify-center items-center ">
+    <div className="flex gap-7  text-black justify-center items-center ">
       {Menus.map((elt, index) => {
         return (
           <Link
             href={elt.link}
             key={index}
             className={
-              path.includes(elt.name.toLocaleLowerCase())
-                ? " bg-main_color text-black/70  p-2 rounded-md"
+              selectedMenu == elt.name
+                ? " bg-main_color text-white font-bold  p-2 rounded-md"
                 : ""
             }
             onClick={() => {

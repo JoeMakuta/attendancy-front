@@ -1,8 +1,10 @@
 import { IUser } from "@/types/global";
 import { atom } from "recoil";
 
-export const currentUserState = atom<IUser>({
-  key: "userState",
+export const currentUserState = atom<
+  IUser
+>({
+  key: "currentUserState",
   default: {
     accessToken: localStorage.getItem("accessToken")
       ? JSON.parse(localStorage.getItem("accessToken") as string)
