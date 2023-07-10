@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { message } from "antd";
 import { IResponse, IUser } from "@/types/global";
-import { ApiClient } from "@/helpers/apiClient";
+import { ApiClient } from "@/helpers/apiClinet";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import {
   useSetRecoilState,

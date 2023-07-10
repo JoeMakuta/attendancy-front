@@ -6,6 +6,10 @@ export const userSelector = selector({
   get: ({ get }) => {
     const user = get(currentUserState);
 
-    return user.user;
+    if(user.user && user.accessToken){
+      return user.user
+    }else{
+      // window.location.reload()
+    }
   },
 });
