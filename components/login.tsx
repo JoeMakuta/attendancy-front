@@ -53,10 +53,11 @@ const Login = () => {
         router.push('/dashboard')
       }
     } catch (error) {
+      setIsLoading(false);
       message.open({
         key: "notification",
         type: "error",
-        content: "error",
+        content: "Une erreur est survenue.",
       });
     }
   };
