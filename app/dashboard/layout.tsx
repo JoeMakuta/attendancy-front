@@ -27,12 +27,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <main>
       <div className="w-screen relative bg-white h-screen">
-        <header className="flex gap-4  px-5 py-2 items-center w-screen justify-end h-20 bg-white">
+        <header className="flex gap-4 fixed  px-5 py-2 items-center w-screen justify-end h-20 bg-white">
           <div className="relative flex w-full gap-2 md:w-max">
             <Input
               type="search"
               placeholder="Recherchez ici ..."
-              className="pr-20 bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#E5203D]/30 focus:ring-1  border-[1px] border-[#000]/10 transition-all"
+              className=" bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#E5203D]/30 focus:ring-2 h-full  border-[1px] border-[#000]/10 transition-all"
               containerProps={{
                 className: "min-w-[288px]",
               }}
@@ -47,10 +47,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <ProfilMenu />
         </header>
         <main className=" flex ">
-          <section className="flex w-64 px-3  fixed  bg-whiter pt-4">
+          <section className="flex w-64 px-3 fixed   bg-whiter pt-4">
             <Menu />
           </section>
-          <section className="w-[calc(100%-16rem)] h-[calc(100%-5rem)]  flex border border-main_color/40 absolute top-20 p-6 left-64 ">
+          <section className="w-[calc(100%-16.75rem)] box-border  flex border border-main_color/40 absolute top-20 p-6 left-64 ">
             {children}
           </section>
         </main>
