@@ -1,7 +1,8 @@
 "use client";
+import { currentUserState } from "@/recoil/atoms/currentUser";
 import { userSelector } from "@/recoil/selectors/currentUser/user";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 interface User {
   email: string;
@@ -10,16 +11,14 @@ interface User {
 }
 
 const Dashboard: React.FC = () => {
-  const recoilUser = useRecoilValue(userSelector);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    setUser(recoilUser as User);
-  }, []);
-
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   return (
-    <div className="">
-          Welcome {user?.name}
+    <div className="flex flex-col ">
+      <h1 className=" font-bold text-4xl ">
+        Bienvenu {currentUser?.user?.name[0]?.toUpperCase()}
+        {currentUser?.user?.name?.substring(1)} !
+      </h1>
+      <div>Body</div>
     </div>
   );
 };
