@@ -29,7 +29,7 @@ const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
 
   return (
-    <ul className="flex gap-4 flex-col w-full  text-black justify-center">
+    <ul className="flex gap-4 flex-col w-full text-black justify-center">
       {Menus.map((elt, index) => {
         return (
           <Link
