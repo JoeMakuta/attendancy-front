@@ -6,6 +6,6 @@ export const getAccessTokenSelector = selector({
   get: ({ get }) => {
     const user = get(currentUserState);
 
-    return user.accessToken;
+    return user?.accessToken
   },
 });

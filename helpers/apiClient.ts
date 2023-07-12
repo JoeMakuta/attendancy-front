@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
-export class AxiosHelpers {
-  static baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export class ApiClient {
+  static baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   static get = async ({
     url = "",

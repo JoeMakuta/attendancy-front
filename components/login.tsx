@@ -1,5 +1,5 @@
 "use client";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import {
   AiFillEyeInvisible,
   AiFillEye,
@@ -8,34 +8,31 @@ import {
 import { useState } from "react";
 import { message } from "antd";
 import { IResponse, IUser } from "@/types/global";
-import { AxiosHelpers } from "@/helpers/axios";
-import { useRecoilState } from "recoil";
+import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
+import {
+  useSetRecoilState,
+} from "recoil";
 import { useRouter } from "next/navigation";
 
-export const inputStyles =
-  " h-12 p-3 w-[100%] bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#E5203D]/30 focus:ring  border-[1px] border-[#000]/10 transition-all flex justify-center items-center ";
-
 const Login = () => {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const router = useRouter()
 
   const LoginUser = async () => {
     setIsLoading(true);
     try {
-      const response: AxiosResponse<IResponse<IUser>> = await AxiosHelpers.post(
-        {
-          url: "/api/auth/login",
-          data: {
-            email,
-            password,
-          },
-        }
-      );
+      const response: AxiosResponse<IResponse<IUser>> = await ApiClient.post({
+        url: "/api/auth/login",
+        data: {
+          email,
+          password,
+        },
+      });
 
       if (response) {
         setIsLoading(false);
@@ -44,17 +41,23 @@ const Login = () => {
           type: "success",
           content: response.data.message,
         });
-        response.data.data.user.password = "";
-        await setCurrentUser(response.data.data);
-        localStorage.setItem("user", JSON.stringify(response.data.data));
-        router.push("/dashboard");
+
+        localStorage.setItem("user", JSON.stringify(response.data.data.user))
+        localStorage.setItem("accessToken", JSON.stringify(response.data.data.accessToken))
+
+        setCurrentUser({
+          accessToken: response.data.data.accessToken,
+          user: response.data.data.user,
+        });
+
+        router.push('/dashboard')
       }
     } catch (error) {
       setIsLoading(false);
       message.open({
         key: "notification",
         type: "error",
-        content: "error",
+        content: "Une erreur est survenue.",
       });
     }
   };
@@ -80,7 +83,7 @@ const Login = () => {
             type="email"
             required={true}
             placeholder="Email"
-            className={inputStyles}
+            className="input-st"
             onChange={(e) => {
               setEmail(e.target.value);
             }}
@@ -92,7 +95,7 @@ const Login = () => {
               required={true}
               type={showPassword ? "text" : "password"}
               placeholder="Mot de pass"
-              className={inputStyles + " min-w-full"}
+              className=" min-w-full input-st"
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
@@ -117,9 +120,8 @@ const Login = () => {
         <button
           type="submit"
           className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg bg-main_color ${
-            isLoading && "bg-main_color/50 cursor-not-allowed"
+            isLoading && "bg-main_color/50"
           } hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
-          disabled={isLoading}
         >
           <span>Se connecter</span>{" "}
           {isLoading && <AiOutlineLoading3Quarters className="animate-spin" />}
