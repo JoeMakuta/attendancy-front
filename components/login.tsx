@@ -5,7 +5,7 @@ import {
   AiFillEye,
   AiOutlineLoading3Quarters,
 } from "react-icons/ai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { message } from "antd";
 import { IResponse, IUser } from "@/types/global";
 import { ApiClient } from "@/helpers/apiClient";
@@ -62,6 +62,18 @@ const Login = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const user: string | null = localStorage.getItem("user");
+    const token: string | null = localStorage.getItem("accessToken");
+    if (user && token) {
+      setCurrentUser({
+        accessToken: JSON.parse(token as string),
+        user: JSON.parse(user as string),
+      });
+      router.push("/dashboard");
+    }
+  }, []);
 
   return (
     <form

@@ -7,13 +7,20 @@ import { Button } from "@material-tailwind/react";
 import { Card, message } from "antd";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { BiArrowFromTop, BiArrowToBottom, BiArrowToTop } from "react-icons/bi";
+import {
+  BiArrowFromTop,
+  BiArrowToBottom,
+  BiArrowToTop,
+  BiLoaderCircle,
+} from "react-icons/bi";
 import { ICard, IStudent } from "@/types/global";
 import { PiStudent, PiStudentLight } from "react-icons/pi";
 import { FiArrowDown, FiArrowUp, FiPlusCircle } from "react-icons/fi";
 import axios, { Axios, AxiosResponse, AxiosResponseHeaders } from "axios";
 import { ApiClient } from "@/helpers/apiClient";
 import { studentsAtoms } from "@/recoil/atoms/students";
+import { attendacesAtom } from "@/recoil/atoms/attendance";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface User {
   email: string;
@@ -24,6 +31,8 @@ interface User {
 const Dashboard: React.FC = () => {
   const currentUser = useRecoilValue(currentUserState);
   const [students, setStudents] = useRecoilState(studentsAtoms);
+  const [attendances, setAttendances] = useRecoilState(attendacesAtom);
+  const [initLoader, setInitLoader] = useState(false);
 
   const cards: ICard[] = [
     {
@@ -60,6 +69,17 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const getAllAttendance = async () => {
+    const Response = await ApiClient.get({
+      url: "/api/attendance",
+      token: currentUser?.accessToken,
+    });
+    if (Response) {
+      console.log("All Attendances = ", Response.data?.data);
+      await setAttendances(Response.data?.data);
+    }
+  };
+
   const chooseVac = () => {
     const date: Date = new Date();
     if (date.getHours() > 13) {
@@ -71,6 +91,7 @@ const Dashboard: React.FC = () => {
 
   const initDay = async () => {
     try {
+      setInitLoader(true);
       const Response = await ApiClient.post({
         data: { vacation: chooseVac() },
         token: currentUser?.accessToken,
@@ -79,7 +100,9 @@ const Dashboard: React.FC = () => {
       if (Response) {
         console.log("Init Day = ", Response.data?.data);
       }
+      setInitLoader(false);
     } catch (error) {
+      setInitLoader(false);
       message.open({
         key: "notification",
         type: "error",
@@ -90,6 +113,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     currentUser.accessToken ? getAllStudents() : null;
+    getAllAttendance();
   }, [currentUser]);
 
   return (
@@ -112,9 +136,16 @@ const Dashboard: React.FC = () => {
           onClick={() => {
             initDay();
           }}
-          className="p-4  bg-white text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white"
+          disabled={initLoader}
+          className={`p-4  bg-white text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white ${
+            initLoader ? "cursor-not-allowed" : ""
+          } `}
         >
-          <FiPlusCircle size={"20"} />
+          {initLoader ? (
+            <AiOutlineLoading3Quarters size={"20"} className="animate-spin" />
+          ) : (
+            <FiPlusCircle size={"20"} />
+          )}
           <p>Nouvelle Journée</p>
         </Button>
       </div>

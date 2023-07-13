@@ -16,6 +16,9 @@ import {
 } from "@material-tailwind/react";
 import { TbEdit } from "react-icons/tb";
 import { HiChevronUpDown, HiUserPlus } from "react-icons/hi2";
+import { IStudent } from "@/types/global";
+import { useRecoilValue } from "recoil";
+import { studentsAtoms } from "@/recoil/atoms/students";
 
 const TABS = [
   {
@@ -32,57 +35,10 @@ const TABS = [
   },
 ];
 
-const TABLE_HEAD = ["Noms", "Creneau", "Presence", "Employed", "Options"];
-
-const TABLE_ROWS = [
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-2.jpg",
-    name: "Alexa Liras",
-    email: "alexa@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: false,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
-    name: "Laurent Perrier",
-    email: "laurent@creative-tim.com",
-    job: "Executive",
-    org: "Projects",
-    online: false,
-    date: "19/09/17",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-4.jpg",
-    name: "Michael Levi",
-    email: "michael@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: true,
-    date: "24/12/08",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
-    name: "Richard Gran",
-    email: "richard@creative-tim.com",
-    job: "Manager",
-    org: "Executive",
-    online: false,
-    date: "04/10/21",
-  },
-];
+const TABLE_HEAD = ["Noms", "Vacation", "Presence", "Date", "Options"];
 
 export default function RepportTable() {
+  const students = useRecoilValue(studentsAtoms);
   return (
     <Card className="h-full w-full">
       {/* <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -143,31 +99,31 @@ export default function RepportTable() {
             </tr>
           </thead>
           <tbody>
-            {TABLE_ROWS.map(
-              ({ img, name, email, job, org, online, date }, index) => {
-                const isLast = index === TABLE_ROWS.length - 1;
+            {students.map(
+              ({ firstname, lastname, _id, middlename, vacation }, index) => {
+                const isLast = index === students.length - 1;
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
                 return (
-                  <tr key={name}>
+                  <tr key={_id}>
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        <Avatar src={img} alt={name} className="w-10 h-10" />
+                        {/* <Avatar src={img} alt={name} className="w-10 h-10" /> */}
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {name}
+                            {firstname} {lastname}
                           </Typography>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal opacity-70"
                           >
-                            {email}
+                            {middlename}
                           </Typography>
                         </div>
                       </div>
@@ -179,14 +135,14 @@ export default function RepportTable() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {job}
+                          {vacation}
                         </Typography>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal opacity-70"
                         >
-                          {org}
+                          {_id}
                         </Typography>
                       </div>
                     </td>
@@ -194,11 +150,7 @@ export default function RepportTable() {
                       <div className="w-max">
                         <Chip
                           value={"offline"}
-                          className={
-                            online
-                              ? `text-black p-1 bg-green-400/50`
-                              : `text-black p-1 bg-red-400/50`
-                          }
+                          className={`text-black p-1 bg-red-400/50`}
                         />
                       </div>
                     </td>
@@ -208,7 +160,7 @@ export default function RepportTable() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {date}
+                        {_id}
                       </Typography>
                     </td>
                     <td className={classes}>
