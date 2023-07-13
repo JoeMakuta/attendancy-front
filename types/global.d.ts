@@ -23,6 +23,7 @@ export interface IStudent {
   vacation: "AV" | "AP";
 }
 
+
 interface ICard {
   title: string;
   value: number;
