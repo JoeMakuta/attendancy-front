@@ -4,7 +4,7 @@ import RepportTable from "@/components/dashboard/repportTable";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { userSelector } from "@/recoil/selectors/currentUser/user";
 import { Button } from "@material-tailwind/react";
-import { Card } from "antd";
+import { Card, message } from "antd";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { BiArrowFromTop, BiArrowToBottom, BiArrowToTop } from "react-icons/bi";
@@ -24,6 +24,7 @@ interface User {
 const Dashboard: React.FC = () => {
   const currentUser = useRecoilValue(currentUserState);
   const [students, setStudents] = useRecoilState(studentsAtoms);
+
   const cards: ICard[] = [
     {
       icon: <FiArrowUp />,
@@ -47,6 +48,7 @@ const Dashboard: React.FC = () => {
       value: students?.length,
     },
   ];
+
   const getAllStudents = async () => {
     const Response = await ApiClient.get({
       url: "/api/students",
@@ -57,9 +59,39 @@ const Dashboard: React.FC = () => {
       await setStudents(Response.data?.data);
     }
   };
+
+  const chooseVac = () => {
+    const date: Date = new Date();
+    if (date.getHours() > 13) {
+      return "AP";
+    } else {
+      return "AV";
+    }
+  };
+
+  const initDay = async () => {
+    try {
+      const Response = await ApiClient.post({
+        data: { vacation: chooseVac() },
+        token: currentUser?.accessToken,
+        url: "/api/attendance/new",
+      });
+      if (Response) {
+        console.log("Init Day = ", Response.data?.data);
+      }
+    } catch (error) {
+      message.open({
+        key: "notification",
+        type: "error",
+        content: "Une erreur est survenu",
+      });
+    }
+  };
+
   useEffect(() => {
     currentUser.accessToken ? getAllStudents() : null;
   }, [currentUser]);
+
   return (
     <div className="flex gap-6 flex-col  w-full ">
       <div className=" flex gap-3 justify-start items-center w-full">
@@ -78,7 +110,7 @@ const Dashboard: React.FC = () => {
         <Button
           variant="filled"
           onClick={() => {
-            console.log("Init day");
+            initDay();
           }}
           className="p-4  bg-white text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white"
         >
