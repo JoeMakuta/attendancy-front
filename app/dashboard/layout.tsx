@@ -28,8 +28,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main>
-      <div className="w-screen relative bg-white h-screen">
-        <section className="flex w-64 px-3 fixed justify-center items-center h-full  bg-whiter">
+      <div className="w-screen relative overflow-x-hidden bg-white h-screen">
+        <section className="flex w-64 px-3 fixed  h-full  bg-whiter">
           <Menu />
         </section>
         <main className="relative left-64 flex flex-col w-[calc(100%-16.75rem)] ">
@@ -59,7 +59,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               <ProfilMenu />
             </div>
           </header>
-          <section className=" relative top-20 max-w-full flex border-l-[1px] border-main_color/40  p-6 ">
+          <section className=" relative top-20  max-w-full flex border-l-[1px] border-main_color/40  p-4 ">
             {children}
           </section>
         </main>

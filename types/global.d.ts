@@ -22,3 +22,11 @@ export interface IStudent {
   middlename: string;
   vacation: "AV" | "AP";
 }
+
+interface ICard {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  status: boolean;
+  suffix: string;
+}

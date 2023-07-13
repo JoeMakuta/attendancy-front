@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import { TbEdit } from "react-icons/tb";
-import { HiUserPlus } from "react-icons/hi2";
+import { HiChevronUpDown, HiUserPlus } from "react-icons/hi2";
 
 const TABS = [
   {
@@ -32,7 +32,7 @@ const TABS = [
   },
 ];
 
-const TABLE_HEAD = ["Member", "Function", "Status", "Employed", ""];
+const TABLE_HEAD = ["Noms", "Creneau", "Presence", "Employed", "Options"];
 
 const TABLE_ROWS = [
   {
@@ -84,7 +84,7 @@ const TABLE_ROWS = [
 
 export default function RepportTable() {
   return (
-    <Card className="h-full min-w-full">
+    <Card className="h-full w-full">
       {/* <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-8 flex items-center justify-between gap-8">
           <div>
@@ -119,23 +119,23 @@ export default function RepportTable() {
           </div>
         </div>
       </CardHeader> */}
-      <CardBody className="overflow-scroll px-0">
-        <table className="mt-4 w-full min-w-max table-auto text-left">
+      <CardBody className=" px-0">
+        <table className="mt-2 w-full min-w-max table-auto text-left">
           <thead>
-            <tr>
+            <tr className=" ">
               {TABLE_HEAD.map((head, index) => (
                 <th
                   key={head}
-                  className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
+                  className="cursor-pointer bg-black/10 hover:bg-main_color/20 border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
                 >
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
+                    className="flex items-center  font-bold  justify-between gap-2  leading-none opacity-70"
                   >
                     {head}{" "}
                     {index !== TABLE_HEAD.length - 1 && (
-                      <TbEdit strokeWidth={2} className="h-4 w-4" />
+                      <HiChevronUpDown className="h-4 w-4" />
                     )}
                   </Typography>
                 </th>
@@ -149,12 +149,11 @@ export default function RepportTable() {
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
-
                 return (
                   <tr key={name}>
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        {/* <Avatar src={img} alt={name} size="xs" /> */}
+                        <Avatar src={img} alt={name} className="w-10 h-10" />
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
@@ -194,10 +193,12 @@ export default function RepportTable() {
                     <td className={classes}>
                       <div className="w-max">
                         <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={online ? "online" : "offline"}
-                          color={online ? "green" : "blue-gray"}
+                          value={"offline"}
+                          className={
+                            online
+                              ? `text-black p-1 bg-green-400/50`
+                              : `text-black p-1 bg-red-400/50`
+                          }
                         />
                       </div>
                     </td>
@@ -229,10 +230,20 @@ export default function RepportTable() {
           Page 1 of 10
         </Typography>
         <div className="flex gap-2">
-          <Button variant="outlined" color="blue-gray" size="sm">
+          <Button
+            className="p-4  hover:bg-white hover:text-main_color hover:border hover:border-main_color flex justify-center items-center gap-2 self-start h-10 bg-main_color text-white"
+            variant="outlined"
+            color="blue-gray"
+            size="sm"
+          >
             Previous
           </Button>
-          <Button variant="outlined" color="blue-gray" size="sm">
+          <Button
+            className="p-4  hover:bg-white hover:text-main_color hover:border hover:border-main_color flex justify-center items-center gap-2 self-start h-10 bg-main_color text-white"
+            variant="outlined"
+            color="blue-gray"
+            size="sm"
+          >
             Next
           </Button>
         </div>
