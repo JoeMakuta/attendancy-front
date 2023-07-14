@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Space, Table } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import type {
   ExpandableConfig,
@@ -44,6 +44,9 @@ const columns: ColumnsType<IStudent> = [
   {
     title: "Vacation",
     dataIndex: "vacation",
+    render: (text) => {
+      return <Tag color="success">{text}</Tag>;
+    },
     filters: [
       {
         text: "Avant midi",
@@ -62,13 +65,17 @@ const columns: ColumnsType<IStudent> = [
     key: "action",
     render: () => (
       <div className=" flex gap-1 ">
-        <Button>
+        <Button
+          type="default"
+          className=" text-red-600 border border-red-600 hover:bg-white hover:text-red-600 "
+        >
           <AiOutlineDelete />
         </Button>
-        <Button>
+
+        <Button className=" text-white bg-main_color/70  hover:bg-white hover:text-red-600 ">
           <HiEye />
         </Button>
-        <Button>
+        <Button className=" text-main_color  hover:bg-white hover:text-red-600 ">
           <FiEdit />
         </Button>
       </div>
@@ -81,7 +88,6 @@ const StudentRepportTable = () => {
   const [rowSelection, setRowSelection] = useState<
     TableRowSelection<IStudent> | undefined
   >({});
-  const [hasData, setHasData] = useState(true);
 
   const [ellipsis, setEllipsis] = useState(false);
 
@@ -89,13 +95,13 @@ const StudentRepportTable = () => {
 
   const tableProps: TableProps<IStudent> = {
     bordered: true,
-    loading: false,
+    loading: students ? false : true,
     size: "middle",
     showHeader: true,
     rowSelection,
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
-    dataSource: hasData ? students : [],
+    dataSource: students,
     scroll: { y: "55vh", x: 20 },
   };
 
