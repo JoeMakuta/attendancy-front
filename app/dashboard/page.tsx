@@ -53,17 +53,6 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const getAllStudents = async () => {
-    const Response = await ApiClient.get({
-      url: "/api/students",
-      token: currentUser?.accessToken,
-    });
-    if (Response) {
-      console.log("All student = ", Response.data?.data);
-      await setStudents(Response.data?.data);
-    }
-  };
-
   const getAllAttendance = async () => {
     const Response = await ApiClient.get({
       url: "/api/attendance",
@@ -107,7 +96,6 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    currentUser.accessToken ? getAllStudents() : null;
     getAllAttendance();
   }, [currentUser]);
 
@@ -131,7 +119,7 @@ const Dashboard: React.FC = () => {
             initDay();
           }}
           disabled={initLoader}
-          className={`p-4  bg-white text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white ${
+          className={`p-4 font-bold bg-white text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white ${
             initLoader ? "cursor-not-allowed" : ""
           } `}
         >
