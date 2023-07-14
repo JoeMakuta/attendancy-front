@@ -3,16 +3,11 @@ import MyCard from "@/components/dashboard/card";
 import RepportTable from "@/components/dashboard/repportTable";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { userSelector } from "@/recoil/selectors/currentUser/user";
-import { Button } from "@material-tailwind/react";
-import { Card, message } from "antd";
+
+import { Button, Card, message } from "antd";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  BiArrowFromTop,
-  BiArrowToBottom,
-  BiArrowToTop,
-  BiLoaderCircle,
-} from "react-icons/bi";
+
 import { ICard, IStudent } from "@/types/global";
 import { PiStudent, PiStudentLight } from "react-icons/pi";
 import { FiArrowDown, FiArrowUp, FiPlusCircle } from "react-icons/fi";
@@ -132,7 +127,6 @@ const Dashboard: React.FC = () => {
           );
         })}
         <Button
-          variant="filled"
           onClick={() => {
             initDay();
           }}

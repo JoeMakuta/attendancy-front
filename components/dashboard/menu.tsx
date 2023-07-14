@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
 import { TbLayoutDashboard } from "react-icons/tb";
 import {
   MdOutlineQrCodeScanner,

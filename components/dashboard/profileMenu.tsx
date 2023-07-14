@@ -1,11 +1,3 @@
-import {
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-} from "@material-tailwind/react";
-import { GoChevronDown } from "react-icons/go";
-import { FiUser, FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
 export default function ProfilMenu() {
@@ -16,7 +8,7 @@ export default function ProfilMenu() {
   };
   return (
     <div className="border  text-main_color border-main_color  rounded-md py-1 px-3">
-      <Menu>
+      {/* <Menu>
         <MenuHandler>
           <div className="flex items-center justify-center gap-2">
             <p className="  font-semibold">Thierry23</p>
@@ -38,7 +30,7 @@ export default function ProfilMenu() {
             <FiLogOut className=" text-main_color" /> <span>Déconnexion</span>{" "}
           </MenuItem>
         </MenuList>
-      </Menu>
+      </Menu> */}
     </div>
   );
 }

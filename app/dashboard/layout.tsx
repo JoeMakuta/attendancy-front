@@ -7,7 +7,6 @@ import ProfilMenu from "@/components/dashboard/profileMenu";
 import Menu from "@/components/dashboard/menu";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiSearchAlt } from "react-icons/bi";
-import { Button, Input } from "@material-tailwind/react";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -28,7 +27,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main>
-      <div className="w-screen relative overflow-x-hidden bg-white h-screen">
+      <div className="w-screen relative  bg-white h-screen">
         <section className="flex w-64 px-3 fixed  h-full  bg-whiter">
           <Menu />
         </section>
@@ -43,13 +42,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className=" flex gap-4 ">
               <div className="relative flex w-full justify-center items-center gap-2 md:w-max">
-                <Input
+                <input
                   type="search"
                   placeholder="Recherchez ici ..."
                   className=" bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#007798]/30 focus:ring-2 h-full  pl-8 border-[1px] border-[#000]/10 transition-all"
-                  containerProps={{
-                    className: "min-w-[288px]",
-                  }}
                 />
                 <BiSearchAlt
                   size={"22"}
