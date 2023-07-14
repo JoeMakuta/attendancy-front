@@ -8,7 +8,7 @@ import {
   MdOutlineQrCodeScanner,
   MdOutlineAdminPanelSettings,
 } from "react-icons/md";
-import { PiStudent, PiStudentThin } from "react-icons/pi";
+import { PiStudent, PiStudentFill, PiStudentThin } from "react-icons/pi";
 import { FiUserCheck } from "react-icons/fi";
 
 const Menus = [
@@ -29,10 +29,7 @@ const Menu = () => {
 
   return (
     <ul className="flex gap-4 flex-col w-full text-black pt-4 ">
-      <PiStudentThin
-        size={"100"}
-        className="text-secondary_color self-center "
-      />
+      <PiStudentFill size={"100"} className="text-main_color self-center " />
       {Menus.map((elt, index) => {
         return (
           <Link
