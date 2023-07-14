@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.input-st{
-    @apply h-12 p-3 w-[100%] bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-[#E5203D]/30 focus:ring  border-[1px] border-[#000]/10 transition-all flex justify-center items-center
+.input-st {
+  @apply h-12 p-3 w-[100%] bg-slate-200 focus:border-[1px]   rounded-lg outline-none focus:ring-main_color/30 focus:ring-2  border-[1px] border-[#000]/10 transition-all flex justify-center items-center;
 }

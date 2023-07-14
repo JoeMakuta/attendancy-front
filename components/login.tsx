@@ -5,14 +5,12 @@ import {
   AiFillEye,
   AiOutlineLoading3Quarters,
 } from "react-icons/ai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { message } from "antd";
 import { IResponse, IUser } from "@/types/global";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
-import {
-  useSetRecoilState,
-} from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { useRouter } from "next/navigation";
 
 const Login = () => {
@@ -20,8 +18,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const router = useRouter()
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+  const router = useRouter();
 
   const LoginUser = async () => {
     setIsLoading(true);
@@ -42,15 +40,18 @@ const Login = () => {
           content: response.data.message,
         });
 
-        localStorage.setItem("user", JSON.stringify(response.data.data.user))
-        localStorage.setItem("accessToken", JSON.stringify(response.data.data.accessToken))
+        localStorage.setItem("user", JSON.stringify(response.data.data.user));
+        localStorage.setItem(
+          "accessToken",
+          JSON.stringify(response.data.data.accessToken)
+        );
 
-        setCurrentUser({
+        await setCurrentUser({
           accessToken: response.data.data.accessToken,
           user: response.data.data.user,
         });
 
-        router.push('/dashboard')
+        router.push("/dashboard");
       }
     } catch (error) {
       setIsLoading(false);
@@ -61,6 +62,18 @@ const Login = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const user: string | null = localStorage.getItem("user");
+    const token: string | null = localStorage.getItem("accessToken");
+    if (user && token) {
+      setCurrentUser({
+        accessToken: JSON.parse(token as string),
+        user: JSON.parse(user as string),
+      });
+      router.push("/dashboard");
+    }
+  }, []);
 
   return (
     <form
