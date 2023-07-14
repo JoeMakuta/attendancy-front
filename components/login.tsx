@@ -55,7 +55,6 @@ const Login = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.log(error);
       message.open({
         key: "notification",
         type: "error",
