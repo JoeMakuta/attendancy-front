@@ -58,7 +58,7 @@ const Login = () => {
       message.open({
         key: "notification",
         type: "error",
-        content: "Une erreur est survenue.",
+        content: "Une erreur est survenu lors de la connexion",
       });
     }
   };
