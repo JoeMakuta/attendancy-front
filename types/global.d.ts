@@ -16,9 +16,28 @@ interface IResponse<TData> {
 }
 
 export interface IStudent {
-  id: string;
+  _id: string;
   firstname: string;
   lastname: string;
   middlename: string;
   vacation: "AV" | "AP";
+}
+
+interface IVacation{
+  vacation : "AV" | "AP"
+}
+
+
+interface ICard {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  status: boolean;
+  suffix: string;
+}
+
+interface IAttendance {
+  date: string;
+  students: IStudent[];
+  vacation : "AV" | "AP"
 }

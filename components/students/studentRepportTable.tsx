@@ -76,7 +76,7 @@ const columns: ColumnsType<IStudent> = [
   },
 ];
 
-const RepportTable = () => {
+const StudentRepportTable = () => {
   const students = useRecoilValue(studentsAtoms);
   const [rowSelection, setRowSelection] = useState<
     TableRowSelection<IStudent> | undefined
@@ -102,4 +102,4 @@ const RepportTable = () => {
   return <Table {...tableProps} />;
 };
 
-export default RepportTable;
+export default StudentRepportTable;

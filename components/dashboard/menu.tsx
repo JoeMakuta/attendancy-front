@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
 import { TbLayoutDashboard } from "react-icons/tb";
 import {
   MdOutlineQrCodeScanner,
   MdOutlineAdminPanelSettings,
 } from "react-icons/md";
-import { PiStudent } from "react-icons/pi";
+import { PiStudent, PiStudentThin } from "react-icons/pi";
 import { FiUserCheck } from "react-icons/fi";
 
 const Menus = [
@@ -29,7 +28,11 @@ const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
 
   return (
-    <ul className="flex gap-4 flex-col w-full text-black justify-center">
+    <ul className="flex gap-4 flex-col w-full text-black pt-4 ">
+      <PiStudentThin
+        size={"100"}
+        className="text-secondary_color self-center "
+      />
       {Menus.map((elt, index) => {
         return (
           <Link
