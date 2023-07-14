@@ -55,10 +55,11 @@ const Login = () => {
       }
     } catch (error) {
       setIsLoading(false);
+      console.log(error);
       message.open({
         key: "notification",
         type: "error",
-        content: "Une erreur est survenue.",
+        content: "Une erreur est survenu lors de la connexion",
       });
     }
   };
