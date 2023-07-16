@@ -45,6 +45,10 @@ const showDeleteConfirm = () => {
 
 const columns: ColumnsType<IStudent> = [
   {
+    title: "Id",
+    dataIndex: "_id",
+  },
+  {
     title: "Prénom",
     dataIndex: "lastname",
     sorter: true,

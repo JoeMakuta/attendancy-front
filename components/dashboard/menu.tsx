@@ -37,7 +37,9 @@ const Menu = () => {
             key={index}
             className={`
               ${
-                selectedMenu == elt.name
+                path == elt.link
+                  ? " bg-main_color text-white font-bold "
+                  : index != 0 && path.includes(elt.link)
                   ? " bg-main_color text-white font-bold "
                   : "hover:bg-main_color/10 "
               }   px-4 py-2  rounded-md
