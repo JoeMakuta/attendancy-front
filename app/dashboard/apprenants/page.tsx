@@ -5,6 +5,7 @@ import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { Button } from "antd";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -21,11 +22,8 @@ const Students = () => {
     <section className=" flex flex-col gap-4 ">
       <div className=" flex justify-between items-center  ">
         <h1 className=" font-bold text-2xl ">Tous les apprenants</h1>
-        <Button
-          onClick={() => {
-            router.push("/dashboard/apprenants/nouvel");
-          }}
-          disabled={initLoader}
+        <Link
+          href={"/dashboard/apprenants/nouvel"}
           className={`p-4 font-bold bg-white text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white ${
             initLoader ? "cursor-not-allowed" : ""
           } `}
@@ -36,7 +34,7 @@ const Students = () => {
             <FiPlusCircle size={"20"} />
           )}
           <p>Ajouter</p>
-        </Button>
+        </Link>
       </div>
       <StudentRepportTable />
     </section>
