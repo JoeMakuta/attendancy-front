@@ -56,7 +56,6 @@ const NewStudentForm = () => {
         content:
           "Une erreur est survenu lors de l'enregistrement de l'apprenant !",
       });
-      console.log(error);
     }
   };
 
@@ -104,7 +103,14 @@ const NewStudentForm = () => {
         </div>
         <div>
           <div className=" flex gap-2 flex-col ">
-            <select name="" className="input-st" id="">
+            <select
+              name=""
+              onChange={(e) => {
+                setVacation(e.target.value);
+              }}
+              className="input-st"
+              id=""
+            >
               {" "}
               <option value="AV">Avant midi</option>{" "}
               <option value="AP">Après midi</option>{" "}
