@@ -9,15 +9,13 @@ import { BiSortDown } from "react-icons/bi";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { useRecoilValue } from "recoil";
 import { IStudent } from "@/types/global";
-import {
-  MdOutlineViewDay,
-  MdTableView,
-  MdViewColumn,
-  MdViewList,
-} from "react-icons/md";
-import { FiDelete, FiEdit } from "react-icons/fi";
-import { AiOutlineDelete } from "react-icons/ai";
-import { HiEye } from "react-icons/hi2";
+import { FiEdit } from "react-icons/fi";
+import { AiFillExclamationCircle, AiOutlineDelete } from "react-icons/ai";
+import { HiExclamationCircle, HiEye } from "react-icons/hi2";
+import { Modal } from "antd";
+import { TbExclamationMark } from "react-icons/tb";
+
+const { confirm } = Modal;
 
 interface DataType {
   key: number;
@@ -26,6 +24,24 @@ interface DataType {
   address: string;
   description: string;
 }
+
+const showDeleteConfirm = () => {
+  confirm({
+    title: "Voulez-vous supprimez l'apprenant ?",
+    content:
+      "L'apprenant sera supprimé définitivement et ne pourra pas etre restauré!",
+    okText: "Oui",
+    okType: "danger",
+    cancelText: "Non",
+    onOk() {
+      console.log("OK");
+    },
+    onCancel() {
+      console.log("Cancel");
+    },
+    centered: true,
+  });
+};
 
 const columns: ColumnsType<IStudent> = [
   {
@@ -45,7 +61,7 @@ const columns: ColumnsType<IStudent> = [
     title: "Vacation",
     dataIndex: "vacation",
     render: (text) => {
-      return <Tag color="success">{text}</Tag>;
+      return <Tag color={text == "AP" ? "blue" : "green"}>{text}</Tag>;
     },
     filters: [
       {
@@ -67,6 +83,9 @@ const columns: ColumnsType<IStudent> = [
       <div className=" flex gap-1 ">
         <Button
           type="default"
+          onClick={() => {
+            showDeleteConfirm();
+          }}
           className=" text-red-600 border border-red-600 hover:bg-white hover:text-red-600 "
         >
           <AiOutlineDelete />
