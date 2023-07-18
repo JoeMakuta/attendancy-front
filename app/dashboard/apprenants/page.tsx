@@ -24,7 +24,7 @@ const Students = () => {
         <h1 className=" font-bold text-2xl ">Tous les apprenants</h1>
         <Link
           href={"/dashboard/apprenants/nouvel"}
-          className={`p-4 font-bold bg-white text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white ${
+          className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white ${
             initLoader ? "cursor-not-allowed" : ""
           } `}
         >

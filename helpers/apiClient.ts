@@ -32,4 +32,34 @@ export class ApiClient {
       },
     });
   };
+
+  static delete = async ({
+    url = "",
+    token = "",
+  } = {}): Promise<AxiosResponse> => {
+    return await axios({
+      baseURL: this.baseUrl,
+      url,
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+  };
+
+  static update = async ({
+    url = "",
+    data = {},
+    token = "",
+  } = {}): Promise<AxiosResponse> => {
+    return await axios({
+      baseURL: this.baseUrl,
+      url,
+      data,
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+  };
 }

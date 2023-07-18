@@ -2,7 +2,7 @@
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { studentsAtoms } from "@/recoil/atoms/students";
-import { message } from "antd";
+import { Modal, message } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -25,7 +25,6 @@ const NewStudentForm = () => {
       token: currentUser?.accessToken,
     });
     if (Response) {
-      console.log("All student = ", Response.data?.data);
       await setStudents(Response.data?.data);
     }
   };
@@ -39,10 +38,11 @@ const NewStudentForm = () => {
         token: currentUser?.accessToken,
       });
       if (Response) {
-        message.open({
-          key: "notification",
-          type: "success",
+        Modal.success({
+          title: "Success!",
           content: "Apprenant enregistré avec success!",
+          centered: true,
+          okType: "default",
         });
         await getAllStudents();
         router.push("/dashboard/apprenants");
@@ -50,9 +50,10 @@ const NewStudentForm = () => {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      message.open({
-        key: "notification",
-        type: "error",
+      Modal.error({
+        centered: true,
+        title: "error",
+        okType: "default",
         content:
           "Une erreur est survenu lors de l'enregistrement de l'apprenant !",
       });
