@@ -1,10 +1,11 @@
 "use client";
 import RepportTable from "@/components/dashboard/repportTable";
+import NewStudentForm from "@/components/students/newStudent";
 import StudentRepportTable from "@/components/students/studentRepportTable";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { studentsAtoms } from "@/recoil/atoms/students";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,7 +15,7 @@ import { useRecoilState } from "recoil";
 
 const Students = () => {
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
-  const [initLoader, setInitLoader] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [students, setStudents] = useRecoilState(studentsAtoms);
   const router = useRouter();
 
@@ -22,20 +23,24 @@ const Students = () => {
     <section className=" flex flex-col gap-4 ">
       <div className=" flex justify-between items-center  ">
         <h1 className=" font-bold text-2xl ">Tous les apprenants</h1>
-        <Link
-          href={"/dashboard/apprenants/nouvel"}
-          className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white ${
-            initLoader ? "cursor-not-allowed" : ""
-          } `}
+        <button
+          onClick={() => setShowModal(true)}
+          className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white
+         `}
         >
-          {initLoader ? (
-            <AiOutlineLoading3Quarters size={"20"} className="animate-spin" />
-          ) : (
-            <FiPlusCircle size={"20"} />
-          )}
+          <FiPlusCircle size={"20"} />
           <p>Ajouter</p>
-        </Link>
+        </button>
       </div>
+      <Modal
+        centered
+        title="Ajouter un nouvel apprenant"
+        open={showModal}
+        width={400}
+        footer={null}
+      >
+        <NewStudentForm closeModal={setShowModal} />
+      </Modal>
       <StudentRepportTable />
     </section>
   );
