@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Space, Table, Tag, message } from "antd";
+import { Button, QRCode, Space, Table, Tag, message } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import type {
   ExpandableConfig,
@@ -17,6 +17,9 @@ import { TbExclamationMark } from "react-icons/tb";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { useRouter } from "next/navigation";
+import { setInterval, setTimeout } from "timers/promises";
+import { ok } from "assert";
+import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
 
 const { confirm } = Modal;
 
@@ -35,6 +38,17 @@ const StudentRepportTable = () => {
     TableRowSelection<IStudent> | undefined
   >({});
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [loadingModal, setLoadingModal] = useState(false);
+  const [qrCodeValue, setQrCodeValue] = useState("");
+  const [currentStudent, setCurrentStudent] = useState<IStudent>({
+    _id: "",
+    firstname: "",
+    lastname: "",
+    middlename: "",
+    vacation: "AV",
+  });
+  const token = useRecoilValue(getAccessTokenSelector);
 
   const [ellipsis, setEllipsis] = useState(false);
 
@@ -44,15 +58,14 @@ const StudentRepportTable = () => {
       token: currentUser?.accessToken,
     });
     if (Response) {
-      console.log("All student = ", Response.data?.data);
       await setStudents(Response.data?.data);
     }
   };
+
   const showDeleteConfirm = (id: string) => {
     confirm({
-      title: "Voulez-vous supprimez l'apprenant ?",
-      content:
-        "L'apprenant sera supprimé définitivement et ne pourra pas etre restauré!",
+      title: "Voulez-vous supprimer l'apprenant ?",
+      content: "L'apprenant sera supprimé définitivement !",
       okText: "Oui",
       okType: "danger",
       cancelText: "Non",
@@ -63,31 +76,60 @@ const StudentRepportTable = () => {
             url: `/api/students/delete/${id}`,
           });
           if (Response) {
-            Modal.info({
-              title: "Apprenant supprimé avec success!",
+            Modal.success({
+              title: "Success!",
+              content: "Apprenant supprimé avec success!",
               centered: true,
+              okType: "default",
             });
             await getAllStudents();
             router.push("/dashboard/apprenants");
           }
         } catch (error) {
-          message.open({
-            key: "notification",
-            type: "error",
+          Modal.error({
+            title: "error",
+            centered: true,
             content: "Une erreur est survenu lors de la suppression!",
+            okType: "default",
           });
         }
       },
-
       centered: true,
     });
   };
 
+  const showStudentDetails = async (id: string) => {
+    setOpen(true);
+    setLoadingModal(true);
+    try {
+      const Response = await ApiClient.get({
+        url: `/api/students/${id}`,
+        token,
+      });
+      if (Response) {
+        setCurrentStudent(Response.data.data);
+      }
+    } catch (error) {}
+    setQrCodeValue(id);
+    setLoadingModal(false);
+  };
+
+  const downloadQRCode = () => {
+    const canvas = document
+      .getElementById("myqrcode")
+      ?.querySelector<HTMLCanvasElement>("canvas");
+    if (canvas) {
+      const url = canvas.toDataURL();
+      const a = document.createElement("a");
+      a.download = "QRCode.png";
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
   const columns: ColumnsType<IStudent> = [
-    {
-      title: "Id",
-      dataIndex: "_id",
-    },
     {
       title: "Prénom",
       dataIndex: "lastname",
@@ -105,7 +147,11 @@ const StudentRepportTable = () => {
       title: "Vacation",
       dataIndex: "vacation",
       render: (text) => {
-        return <Tag color={text == "AP" ? "blue" : "green"}>{text}</Tag>;
+        return (
+          <Tag color={text == "AP" ? "blue" : "green"}>
+            {text == "AP" ? "Après-midi" : "Avant-midi"}
+          </Tag>
+        );
       },
       filters: [
         {
@@ -136,7 +182,12 @@ const StudentRepportTable = () => {
             <AiOutlineDelete />
           </Button>
 
-          <Button className=" text-white bg-main_color/70  hover:bg-white hover:text-red-600 ">
+          <Button
+            onClick={() => {
+              showStudentDetails(record._id);
+            }}
+            className=" text-white bg-main_color/70  hover:bg-white hover:text-red-600 "
+          >
             <HiEye />
           </Button>
           <Button className=" text-main_color  hover:bg-white hover:text-red-600 ">
@@ -161,7 +212,81 @@ const StudentRepportTable = () => {
     scroll: { y: "55vh", x: 20 },
   };
 
-  return <Table {...tableProps} />;
+  return (
+    <div>
+      <Table {...tableProps} />
+      <Modal
+        centered
+        title="Details de l'apprenant"
+        open={open}
+        width={800}
+        footer={[
+          <Button
+            key="back"
+            className=" bg-main_color text-white "
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            OK
+          </Button>,
+        ]}
+      >
+        {loadingModal ? (
+          <div>Loading ...</div>
+        ) : (
+          <div className=" flex gap-6">
+            <div id="myqrcode">
+              <QRCode
+                size={250}
+                value={qrCodeValue}
+                style={{ marginBottom: 16 }}
+              />
+              {qrCodeValue !== "" ? (
+                <Button
+                  className=" border-[2px] border-main_color text-main_color"
+                  onClick={downloadQRCode}
+                >
+                  Télécharger
+                </Button>
+              ) : null}
+            </div>
+            <div className=" flex flex-col gap-4 ">
+              <h1 className=" font-bold  ">Details : </h1>
+              <div className=" flex flex-col  ">
+                <p>
+                  Identifiant :{" "}
+                  <span className="font-bold">{currentStudent._id}</span>
+                </p>
+                <p>
+                  Nom :
+                  <span className="font-bold">{currentStudent.firstname}</span>
+                </p>
+                <p>
+                  Post-nom :{" "}
+                  <span className="font-bold">{currentStudent.middlename}</span>
+                </p>
+                <p>
+                  Prénom :{" "}
+                  <span className="font-bold">{currentStudent.lastname}</span>
+                </p>
+                <p>
+                  Vacation :{" "}
+                  <Tag
+                    color={currentStudent.vacation == "AP" ? "blue" : "green"}
+                  >
+                    {currentStudent.vacation == "AP"
+                      ? "Après-midi"
+                      : "Avant-midi"}
+                  </Tag>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
 };
 
 export default StudentRepportTable;
