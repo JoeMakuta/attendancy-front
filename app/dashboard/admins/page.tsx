@@ -65,7 +65,7 @@ export default function Users(): JSX.Element {
     getAdmins();
   }, [setAdmins, token, adminModal.showModal]);
 
-  const columns: ColumnsType<{ name: string; email: string; _id: string }> = [
+  const columns: ColumnsType<{ name: string; email: string;  }> = [
     {
       title: "Name",
       dataIndex: "name",
@@ -163,7 +163,7 @@ export default function Users(): JSX.Element {
                       onClick={() => {
                         setAdminModal({
                           ...adminModal,
-                          adminId: record._id,
+                          adminId: "record._id",
                           action: "Enregister",
                           showModal: true,
                         });
@@ -180,7 +180,6 @@ export default function Users(): JSX.Element {
             dataSource={[
               {
                 name: currentUser.name,
-                _id: JSON.parse(localStorage.getItem("user") as string)._id,
                 email: currentUser.email,
               },
             ]}
