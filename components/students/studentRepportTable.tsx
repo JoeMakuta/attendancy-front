@@ -67,7 +67,9 @@ const StudentRepportTable = () => {
               title: "Apprenant supprimé avec success!",
               centered: true,
             });
+
             await getAllStudents();
+            
             router.push("/dashboard/apprenants");
           }
         } catch (error) {
@@ -84,10 +86,6 @@ const StudentRepportTable = () => {
   };
 
   const columns: ColumnsType<IStudent> = [
-    {
-      title: "Id",
-      dataIndex: "_id",
-    },
     {
       title: "Prénom",
       dataIndex: "lastname",

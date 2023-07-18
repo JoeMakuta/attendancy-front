@@ -25,7 +25,6 @@ const NewStudentForm = () => {
       token: currentUser?.accessToken,
     });
     if (Response) {
-      console.log("All student = ", Response.data?.data);
       await setStudents(Response.data?.data);
     }
   };
