@@ -38,6 +38,7 @@ const Students = () => {
         open={showModal}
         width={400}
         footer={null}
+        onCancel={() => setShowModal(false)}
       >
         <NewStudentForm closeModal={setShowModal} />
       </Modal>
