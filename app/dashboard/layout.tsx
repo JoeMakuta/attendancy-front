@@ -48,33 +48,31 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main>
-      <div className="w-screen relative  bg-white h-screen">
-        <section className="flex w-64 px-3 fixed  h-full  bg-whiter">
+      <div className="w-screen relative bg-white h-screen grid grid-cols-[270px_1fr] grid-rows-[80px_1fr]">
+        <header className="flex gap-4 border-l-[1px] border-b-[1px]  border-main_color/20 px-5 py-2 items-center w-full justify-between h-20 bg-white">
+          <div>
+            <h1 className=" font-bold  ">
+              Bienvenu {currentUser?.user?.name[0]?.toUpperCase()}
+              {currentUser?.user?.name?.substring(1)} !
+            </h1>
+            <p className=" text-xs ">{path}</p>
+          </div>
+          <div className=" flex gap-4 justify-center items-center">
+            <Input.Search
+              size="large"
+              style={{ width: "500px" }}
+              placeholder="Recherchez ici ..."
+            />
+
+            <ProfilMenu />
+          </div>
+        </header>
+        <section className="flex w-64 px-3 row-start-1 row-end-3  h-full  bg-whiter">
           <Menu />
         </section>
-        <main className="relative left-64 flex flex-col w-[calc(100%-16.75rem)] ">
-          <header className="flex gap-4 border-l-[1px]  border-b-[1px]  z-10 fixed border-main_color/20 px-5 py-2 items-center w-[calc(100%-16.75rem)] justify-between h-20 bg-white">
-            <div>
-              <h1 className=" font-bold  ">
-                Bienvenu {currentUser?.user?.name[0]?.toUpperCase()}
-                {currentUser?.user?.name?.substring(1)} !
-              </h1>
-              <p className=" text-xs ">{path}</p>
-            </div>
-            <div className=" flex gap-4 justify-center items-center">
-              <Input.Search
-                size="large"
-                style={{ width: "500px" }}
-                placeholder="Recherchez ici ..."
-              />
-
-              <ProfilMenu />
-            </div>
-          </header>
-          <section className=" relative top-20 pt-5 max-w-full flex border-l-[1px] border-main_color/20  p-4 ">
-            {children}
-          </section>
-        </main>
+        <section className=" pt-5 flex border-l-[1px] border-main_color/20  min-w-full min-h-full p-4 ">
+          {children}
+        </section>
       </div>
     </main>
   );
