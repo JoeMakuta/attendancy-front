@@ -49,7 +49,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <main>
       <div className="w-screen relative bg-white h-screen grid grid-cols-[270px_1fr] grid-rows-[80px_1fr]">
-        <header className="flex gap-4 border-l-[1px] border-b-[1px]  border-main_color/20 px-5 py-2 items-center w-full justify-between h-20 bg-white">
+        <header className="flex  gap-4 border-l-[1px] border-b-[1px]  border-main_color/20 px-5 py-2 items-center w-full justify-between h-20 bg-white">
           <div>
             <h1 className=" font-bold  ">
               Bienvenu {currentUser?.user?.name[0]?.toUpperCase()}
@@ -67,10 +67,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             <ProfilMenu />
           </div>
         </header>
-        <section className="flex w-64 px-3 row-start-1 row-end-3  h-full  bg-whiter">
+        <section className="flex  w-64 px-3 row-start-1 row-end-3  h-full  bg-whiter">
           <Menu />
         </section>
-        <section className=" pt-5 flex border-l-[1px] border-main_color/20  min-w-full min-h-full p-4 ">
+        <section className=" pt-5 flex border-l-[1px] border-main_color/20  min-w-full min-h-full overflow-y-scroll overflow-x-hidden p-4 ">
           {children}
         </section>
       </div>
