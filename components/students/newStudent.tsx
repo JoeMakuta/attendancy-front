@@ -4,11 +4,15 @@ import { currentUserState } from "@/recoil/atoms/currentUser";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { Modal, message } from "antd";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-const NewStudentForm = () => {
+const NewStudentForm = ({
+  closeModal,
+}: {
+  closeModal: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [firstname, setFirstname] = useState("");
   const [middlename, setMiddlename] = useState("");
@@ -29,6 +33,13 @@ const NewStudentForm = () => {
     }
   };
 
+  const resetStates = () => {
+    setFirstname("");
+    setMiddlename("");
+    setLastname("");
+    setVacation("AV");
+  };
+
   const addNewStudent = async () => {
     try {
       setIsLoading(true);
@@ -38,6 +49,8 @@ const NewStudentForm = () => {
         token: currentUser?.accessToken,
       });
       if (Response) {
+        closeModal(false);
+        resetStates();
         Modal.success({
           title: "Success!",
           content: "Apprenant enregistré avec success!",
@@ -75,6 +88,7 @@ const NewStudentForm = () => {
             required={true}
             placeholder="Nom"
             className="input-st"
+            value={firstname}
             onChange={(e) => {
               setFirstname(e.target.value);
             }}
@@ -85,6 +99,7 @@ const NewStudentForm = () => {
             type="text"
             required={true}
             placeholder="Post-nom"
+            value={middlename}
             className="input-st"
             onChange={(e) => {
               setMiddlename(e.target.value);
@@ -95,6 +110,7 @@ const NewStudentForm = () => {
           <input
             type="text"
             required={true}
+            value={lastname}
             placeholder="Prénom"
             className="input-st"
             onChange={(e) => {
@@ -109,6 +125,7 @@ const NewStudentForm = () => {
               onChange={(e) => {
                 setVacation(e.target.value);
               }}
+              value={vacation}
               className="input-st"
               id=""
             >
@@ -119,7 +136,20 @@ const NewStudentForm = () => {
           </div>
         </div>
       </div>
-      <div className=" flex flex-col justify-center items-center gap-5  w-full">
+      <div className=" flex  justify-center items-center gap-5  w-full">
+        <button
+          onClick={() => {
+            closeModal(false);
+            resetStates();
+          }}
+          disabled={isLoading}
+          type="button"
+          className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg border-[1px] border-main_color bg-white ${
+            isLoading && "bg-main_color/50"
+          } hover:bg-main_color hover:text-white transition-all duration-500 font-bold text-main_color active:bg-black`}
+        >
+          <span>Annuler</span>{" "}
+        </button>
         <button
           type="submit"
           className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg bg-main_color ${

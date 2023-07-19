@@ -10,7 +10,11 @@ import { studentsAtoms } from "@/recoil/atoms/students";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IStudent } from "@/types/global";
 import { FiEdit } from "react-icons/fi";
-import { AiFillExclamationCircle, AiOutlineDelete } from "react-icons/ai";
+import {
+  AiFillExclamationCircle,
+  AiOutlineDelete,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { HiExclamationCircle, HiEye } from "react-icons/hi2";
 import { Modal } from "antd";
 import { TbExclamationMark } from "react-icons/tb";
@@ -39,8 +43,10 @@ const StudentRepportTable = () => {
   >({});
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [open1, setOpen1] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
   const [qrCodeValue, setQrCodeValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [currentStudent, setCurrentStudent] = useState<IStudent>({
     _id: "",
     firstname: "",
@@ -100,20 +106,58 @@ const StudentRepportTable = () => {
     });
   };
 
-  const showStudentDetails = async (id: string) => {
-    setOpen(true);
-    setLoadingModal(true);
+  const modifyStudent = (student: IStudent) => {
+    setOpen1(true);
+    setCurrentStudent(student);
+  };
+
+  const submitUpdateForm = async () => {
+    setIsLoading(true);
     try {
-      const Response = await ApiClient.get({
-        url: `/api/students/${id}`,
+      const data: {
+        __v?: string;
+        _id?: string;
+        firstname: string;
+        middlename: string;
+        lastname: string;
+        vacation: "AP" | "AV";
+      } = { ...currentStudent };
+      delete data._id;
+      delete data.__v;
+      const Response = await ApiClient.update({
         token,
+        data: data,
+        url: `/api/students/update/${currentStudent._id}`,
       });
       if (Response) {
-        setCurrentStudent(Response.data.data);
+        setIsLoading(false);
+        Modal.success({
+          title: "Success",
+          content: "L'apprennant a été modifié avec success!",
+          okType: "default",
+          centered: true,
+        });
+        setOpen1(false);
+        await getAllStudents();
       }
-    } catch (error) {}
-    setQrCodeValue(id);
-    setLoadingModal(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+      Modal.error({
+        title: "Erreur",
+        centered: true,
+        content: "L'apprennant n'a pas pu etre modifié !",
+        okType: "default",
+      });
+    }
+  };
+
+  const showStudentDetails = async (student: IStudent) => {
+    await setOpen(true);
+    await setLoadingModal(true);
+    await setCurrentStudent(student);
+    await setQrCodeValue(student._id);
+    await setLoadingModal(false);
   };
 
   const downloadQRCode = () => {
@@ -186,13 +230,18 @@ const StudentRepportTable = () => {
 
           <Button
             onClick={() => {
-              showStudentDetails(record._id);
+              showStudentDetails(record);
             }}
             className=" text-white bg-main_color/70  hover:bg-white hover:text-red-600 "
           >
             <HiEye />
           </Button>
-          <Button className=" text-main_color  hover:bg-white hover:text-red-600 ">
+          <Button
+            onClick={() => {
+              modifyStudent({ ...record });
+            }}
+            className=" text-main_color  hover:bg-white hover:text-red-600 "
+          >
             <FiEdit />
           </Button>
         </div>
@@ -286,6 +335,114 @@ const StudentRepportTable = () => {
             </div>
           </div>
         )}
+      </Modal>
+      <Modal
+        centered
+        title="Modifier un apprenant"
+        open={open1}
+        width={400}
+        footer={null}
+      >
+        <form
+          className=" flex flex-col gap-6 "
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await submitUpdateForm();
+          }}
+        >
+          <div className="flex flex-col text-start text-sm gap-4 min-w-[300px] w-full ">
+            <div className=" flex flex-col gap-2 ">
+              <input
+                type="text"
+                required={true}
+                placeholder="Nom"
+                value={currentStudent.firstname}
+                className="input-st"
+                onChange={(e) => {
+                  setCurrentStudent({
+                    ...currentStudent,
+                    firstname: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div className=" flex flex-col gap-2 ">
+              <input
+                type="text"
+                required={true}
+                value={currentStudent.middlename}
+                placeholder="Post-nom"
+                className="input-st"
+                onChange={(e) => {
+                  setCurrentStudent({
+                    ...currentStudent,
+                    middlename: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div className=" flex flex-col gap-2 ">
+              <input
+                type="text"
+                required={true}
+                placeholder="Prénom"
+                value={currentStudent.lastname}
+                className="input-st"
+                onChange={(e) => {
+                  setCurrentStudent({
+                    ...currentStudent,
+                    lastname: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <div className=" flex gap-2 flex-col ">
+                <select
+                  name=""
+                  value={currentStudent.vacation}
+                  onChange={(e) => {
+                    setCurrentStudent({
+                      ...currentStudent,
+                      vacation: e.target.value as "AP" | "AV",
+                    });
+                  }}
+                  className="input-st"
+                >
+                  {" "}
+                  <option value="AV">Avant midi</option>{" "}
+                  <option value="AP">Après midi</option>{" "}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className=" flex  justify-center items-center gap-5  w-full">
+            <button
+              onClick={() => {
+                setOpen1(false);
+              }}
+              disabled={isLoading}
+              type="button"
+              className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg border-[1px] border-main_color bg-white ${
+                isLoading && "bg-main_color/50"
+              } hover:bg-main_color hover:text-white transition-all duration-500 font-bold text-main_color active:bg-black`}
+            >
+              <span>Annuler</span>{" "}
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`flex items-center justify-center gap-3 w-full text-base h-10 rounded-lg bg-main_color ${
+                isLoading && "bg-main_color/50"
+              } hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
+            >
+              <span>Modifier</span>{" "}
+              {isLoading && (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              )}
+            </button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
