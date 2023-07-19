@@ -17,8 +17,8 @@ const Menus = [
   { name: "Apprenants", link: "/dashboard/apprenants", icon: PiStudent },
   { name: "Presences", link: "/dashboard/presences", icon: FiUserCheck },
   {
-    name: "Admin",
-    link: "/dashboard/admin",
+    name: "Admins",
+    link: "/dashboard/admins",
     icon: MdOutlineAdminPanelSettings,
   },
 ];

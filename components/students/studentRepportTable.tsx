@@ -82,7 +82,9 @@ const StudentRepportTable = () => {
               centered: true,
               okType: "default",
             });
+
             await getAllStudents();
+            
             router.push("/dashboard/apprenants");
           }
         } catch (error) {
