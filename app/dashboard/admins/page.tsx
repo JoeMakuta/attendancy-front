@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { usersState } from "@/recoil/atoms/users";
 import { Button, Modal, message } from "antd";
 import { ColumnsType } from "antd/es/table";
-import {AiOutlineLoading3Quarters } from "react-icons/ai";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiEdit, FiPlusCircle } from "react-icons/fi";
 import { Table } from "antd";
 import { useEffect, useState } from "react";
@@ -43,7 +43,11 @@ export default function Users(): JSX.Element {
     adminId: "",
   });
 
-  const adminModalPortal = new AdminModalPortal(adminModal , setAdminModal , token)
+  const adminModalPortal = new AdminModalPortal(
+    adminModal,
+    setAdminModal,
+    token
+  );
 
   useEffect(() => {
     const getAdmins = async () => {
@@ -65,7 +69,7 @@ export default function Users(): JSX.Element {
     getAdmins();
   }, [setAdmins, token, adminModal.showModal]);
 
-  const columns: ColumnsType<{ name: string; email: string;  }> = [
+  const columns: ColumnsType<{ name: string; email: string }> = [
     {
       title: "Name",
       dataIndex: "name",
@@ -79,14 +83,16 @@ export default function Users(): JSX.Element {
   return (
     <div className="w-full h-full">
       <div className="w-full flex items-center justify-between">
-        <h2 className=" text-2xl">Admins</h2>
-        <Button
+        <h1 className=" font-bold text-2xl ">Tous les administrateurs</h1>
+        <button
           onClick={() => adminModalPortal.showModal(true)}
-          className=" flex items-center justify-center gap-3 text-main_color  hover:bg-white hover:text-red-600 "
+          className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white transition-all 
+         
+          `}
         >
           <FiPlusCircle size={"20"} />
           <span className="font-bold">Ajouter</span>
-        </Button>
+        </button>
       </div>
 
       <div className="w-full">
@@ -110,12 +116,12 @@ export default function Users(): JSX.Element {
                     ? adminModalPortal.createAdmin
                     : () => adminModalPortal.updateAdmin(adminModal.adminId)
                 }
-                className={`flex  items-center justify-center gap-3 border p-3 text-base h-10 rounded-lg bg-main_color  hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
+                className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white`}
               >
-                <span>{adminModal.action}</span>{" "}
                 {adminModal.loading && (
                   <AiOutlineLoading3Quarters className="animate-spin" />
                 )}
+                <span>{adminModal.action}</span>{" "}
               </button>
             </div>
           }
@@ -147,11 +153,13 @@ export default function Users(): JSX.Element {
         </Modal>
         <Table
           columns={columns}
+          scroll={{ y: "50vh" }}
           dataSource={admins.filter((el) => el.name != currentUser.name)}
         />
         <div className="w-full">
-          <span className=" text-lg">Moi</span>
+          <h1 className=" font-bold text-2xl ">Moi</h1>
           <Table
+            pagination={false}
             columns={[
               ...columns,
               {
