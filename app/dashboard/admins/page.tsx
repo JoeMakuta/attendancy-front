@@ -153,11 +153,13 @@ export default function Users(): JSX.Element {
         </Modal>
         <Table
           columns={columns}
+          scroll={{ y: "50vh" }}
           dataSource={admins.filter((el) => el.name != currentUser.name)}
         />
         <div className="w-full">
           <h1 className=" font-bold text-2xl ">Moi</h1>
           <Table
+            pagination={false}
             columns={[
               ...columns,
               {

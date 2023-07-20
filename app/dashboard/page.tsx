@@ -15,6 +15,7 @@ import { ApiClient } from "@/helpers/apiClient";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 interface User {
   email: string;
@@ -29,6 +30,7 @@ const Dashboard: React.FC = () => {
   const [initLoader, setInitLoader] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [vacation, setVacation] = useState<"AP" | "AV">("AV");
+  const router = useRouter();
 
   const cards: ICard[] = [
     {
@@ -81,6 +83,8 @@ const Dashboard: React.FC = () => {
           centered: true,
           okType: "default",
         });
+        await getAllAttendance();
+        router.push("/dashboard");
       }
       setInitLoader(false);
     } catch (error) {
@@ -93,8 +97,11 @@ const Dashboard: React.FC = () => {
         centered: true,
         okType: "default",
       });
+      setShowModal(false);
     }
   };
+
+  const yesterday = new Date().setDate(new Date().getDate() - 1);
 
   useEffect(() => {
     getAllAttendance();
@@ -131,10 +138,10 @@ const Dashboard: React.FC = () => {
           );
         })}
       </div>
-      <h1 className=" font-bold ">Avant-midi {new Date().getDay() - 1}</h1>
-      <RepportTable />
-      <h1 className=" font-bold ">Après-midi {new Date().getDay() - 1}</h1>
-      <RepportTable />
+      <h1 className=" font-bold ">Avant-midi {yesterday}</h1>
+      <RepportTable vac={"AV"} />
+      <h1 className=" font-bold ">Après-midi {yesterday}</h1>
+      <RepportTable vac={"AP"} />
       <Modal
         centered
         title="Veillez choisir une vacation"
