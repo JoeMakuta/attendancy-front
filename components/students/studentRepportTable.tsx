@@ -90,7 +90,7 @@ const StudentRepportTable = () => {
             });
 
             await getAllStudents();
-            
+
             router.push("/dashboard/apprenants");
           }
         } catch (error) {
@@ -260,7 +260,7 @@ const StudentRepportTable = () => {
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
     dataSource: students,
-    scroll: { y: "55vh", x: 20 },
+    scroll: { y: "60vh" },
   };
 
   return (
