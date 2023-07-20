@@ -39,16 +39,16 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
   const columns: ColumnsType<IStudent> = [
     {
       title: "Prénom",
-      dataIndex: "student.lastname",
+      dataIndex: "lastname",
       sorter: true,
     },
     {
       title: "Nom",
-      dataIndex: "student.firstname",
+      dataIndex: "firstname",
     },
     {
       title: "Post-nom",
-      dataIndex: "student.middlename",
+      dataIndex: "middlename",
     },
     {
       title: "Status",
