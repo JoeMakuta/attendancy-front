@@ -101,7 +101,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const yesterday = new Date().setDate(new Date().getDate() - 1);
+  // const yesterday = new Date().setDate(new Date().getDate() - 1);
 
   useEffect(() => {
     getAllAttendance();
@@ -138,9 +138,9 @@ const Dashboard: React.FC = () => {
           );
         })}
       </div>
-      <h1 className=" font-bold ">Avant-midi {yesterday}</h1>
+      <h1 className=" font-bold ">Avant-midi </h1>
       <RepportTable vac={"AV"} />
-      <h1 className=" font-bold ">Après-midi {yesterday}</h1>
+      <h1 className=" font-bold ">Après-midi </h1>
       <RepportTable vac={"AP"} />
       <Modal
         centered
