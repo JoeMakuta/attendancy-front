@@ -36,8 +36,13 @@ interface ICard {
   suffix: string;
 }
 
+interface IStudentAttendance {
+  status: 'ABSENT' | "PRESENT";
+  student: IStudent ;
+}
 interface IAttendance {
   date: string;
-  students: IStudent[];
+  students: { status: 'ABSENT' | "PRESENT"; student: IStudent }[];
   vacation : "AV" | "AP"
 }
+

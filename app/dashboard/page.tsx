@@ -28,6 +28,8 @@ const Dashboard: React.FC = () => {
   const [students, setStudents] = useRecoilState(studentsAtoms);
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
   const [initLoader, setInitLoader] = useState(false);
+  const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
+  const [showModal1, setShowModal1] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [vacation, setVacation] = useState<"AP" | "AV">("AV");
   const router = useRouter();
@@ -187,6 +189,7 @@ const Dashboard: React.FC = () => {
           <Radio value={"AP"}>Après-midi</Radio>
         </Radio.Group>
       </Modal>
+      
     </div>
   );
 };
