@@ -113,7 +113,13 @@ const Dashboard: React.FC = () => {
     <div className="flex gap-6 flex-col  w-full ">
       <div className=" flex justify-between items-center ">
         <h1 className=" font-bold text-2xl ">
-          {"Rapport de la journée d'hier."}
+          {"Rapport de la journée du " +
+            new Date().toLocaleDateString("fr-IN", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
         </h1>
         <button
           onClick={() => {
@@ -189,7 +195,6 @@ const Dashboard: React.FC = () => {
           <Radio value={"AP"}>Après-midi</Radio>
         </Radio.Group>
       </Modal>
-      
     </div>
   );
 };

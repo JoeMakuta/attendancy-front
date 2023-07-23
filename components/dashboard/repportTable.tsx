@@ -34,6 +34,7 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
   const [rowSelection, setRowSelection] = useState<
     TableRowSelection<IStudentAttendance> | undefined
   >({});
+ 
   const [ellipsis, setEllipsis] = useState(false);
   const [initLoader, setInitLoader] = useState(false);
   const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
