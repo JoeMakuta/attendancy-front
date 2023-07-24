@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Modal, Radio, Space, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import type {
@@ -34,6 +34,7 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
   const [rowSelection, setRowSelection] = useState<
     TableRowSelection<IStudentAttendance> | undefined
   >({});
+
   const [ellipsis, setEllipsis] = useState(false);
   const [initLoader, setInitLoader] = useState(false);
   const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
@@ -123,6 +124,8 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
     },
   ];
 
+  const data: IAttendance[] = attendances.filter((elt) => elt.vacation == vac);
+
   const tableColumns = columns.map((item) => ({ ...item, ellipsis }));
 
   const tableProps: TableProps<IStudentAttendance> = {
@@ -133,8 +136,7 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
     rowSelection,
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
-    dataSource:
-      attendances[attendances.length - (vac == "AP" ? 2 : 1)]?.students,
+    dataSource: data[data.length - 1]?.students,
     scroll: { y: "60vh" },
     // rowClassName : (record) => record.student?
   };
