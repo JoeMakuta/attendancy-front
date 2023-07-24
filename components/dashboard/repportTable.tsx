@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Space, Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Modal, Radio, Space, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import type {
   ExpandableConfig,
@@ -8,7 +8,7 @@ import type {
 import { BiSortDown } from "react-icons/bi";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { IStudent, IVacation } from "@/types/global";
+import { IStudent, IStudentAttendance, IVacation } from "@/types/global";
 import {
   MdOutlineViewDay,
   MdTableView,
@@ -16,39 +16,53 @@ import {
   MdViewList,
 } from "react-icons/md";
 import { FiDelete, FiEdit } from "react-icons/fi";
-import { AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { HiEye } from "react-icons/hi2";
 import { IAttendance } from "@/types/global";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 
 interface DataType {
-  key: number;
-  name: string;
-  age: number;
-  address: string;
-  description: string;
+  status: "ABSENT" | "PRESENT";
+  lastname: string;
+  firstname: string;
+  middlename: string;
+  vacation: "AP" | "AV";
 }
 
 const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
   const [rowSelection, setRowSelection] = useState<
-    TableRowSelection<IStudent> | undefined
+    TableRowSelection<IStudentAttendance> | undefined
   >({});
-  const [ellipsis, setEllipsis] = useState(false);
 
-  const columns: ColumnsType<IStudent> = [
+  const [ellipsis, setEllipsis] = useState(false);
+  const [initLoader, setInitLoader] = useState(false);
+  const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
+  const [currentStudent, setCurrentStudent] = useState("");
+  const [showModal1, setShowModal1] = useState(false);
+
+  const columns: ColumnsType<IStudentAttendance> = [
     {
       title: "Prénom",
-      dataIndex: "lastname",
+      dataIndex: "student",
+      render: (data: IStudent) => {
+        return <div>{data?.lastname}</div>;
+      },
       sorter: true,
     },
     {
       title: "Nom",
-      dataIndex: "firstname",
+      dataIndex: "student",
+      render: (data: IStudent) => {
+        return <div>{data?.firstname}</div>;
+      },
     },
     {
       title: "Post-nom",
-      dataIndex: "middlename",
+      dataIndex: "student",
+      render: (data: IStudent) => {
+        return <div>{data?.lastname}</div>;
+      },
     },
     {
       title: "Status",
@@ -63,8 +77,13 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
           value: "ABSENT",
         },
       ],
-      onFilter: (value, record) =>
-        record.vacation.indexOf(value as string) === 0,
+      render: (text, record) =>
+        record.student ? (
+          <Tag color={text == "PRESENT" ? "green" : "red"}>
+            {text == "PRESENT" ? "Présent(e)" : "Absent(e)"}
+          </Tag>
+        ) : null,
+      onFilter: (value, record) => record.status.indexOf(value as string) === 0,
     },
 
     {
@@ -92,7 +111,9 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
           </Button> */}
           <Button
             onClick={() => {
-              // modifyStudent({ ...record });
+              setShowModal1(true);
+              setCurrentStudent(record.student?.lastname);
+              setPresenceStatut(record?.status);
             }}
             className=" text-main_color  hover:bg-white hover:text-red-600 "
           >
@@ -103,9 +124,11 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
     },
   ];
 
+  const data: IAttendance[] = attendances.filter((elt) => elt.vacation == vac);
+
   const tableColumns = columns.map((item) => ({ ...item, ellipsis }));
 
-  const tableProps: TableProps<IStudent> = {
+  const tableProps: TableProps<IStudentAttendance> = {
     bordered: true,
     loading: attendances ? false : true,
     size: "middle",
@@ -113,12 +136,68 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
     rowSelection,
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
-    dataSource:
-      attendances[attendances.length - (vac == "AP" ? 1 : 2)]?.students,
+    dataSource: data[data.length - 1]?.students,
     scroll: { y: "60vh" },
+    // rowClassName : (record) => record.student?
   };
 
-  return <Table {...tableProps} />;
+  return (
+    <div>
+      <Table {...tableProps} />
+      <Modal
+        centered
+        title={"Modifier la présence de " + currentStudent}
+        open={showModal1}
+        width={400}
+        onCancel={() => setShowModal1(false)}
+        footer={[
+          <div className=" flex gap-3 justify-end " key={"b1"}>
+            <button
+              onClick={() => {
+                setShowModal1(false);
+              }}
+              type="button"
+              className={`flex items-center justify-center p-3 text-base h-10 rounded-lg border-[1px] border-main_color bg-white ${
+                initLoader && "bg-main_color/50"
+              } hover:bg-main_color hover:text-white transition-all duration-500 font-bold text-main_color active:bg-black`}
+            >
+              <span>Annuler</span>{" "}
+            </button>
+            <button
+              className={`flex items-center justify-center gap-3  p-3 text-base h-10 rounded-lg bg-main_color ${
+                initLoader && "bg-main_color/50"
+              } hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
+              onClick={() => {
+                console.log("Update presence.");
+              }}
+            >
+              {initLoader && (
+                <AiOutlineLoading3Quarters
+                  size={"20"}
+                  className="animate-spin"
+                />
+              )}
+              <span>Ok</span>{" "}
+            </button>
+          </div>,
+        ]}
+      >
+        <Radio.Group
+          onChange={(e) => setPresenceStatut(e.target.value)}
+          value={presenceStatut}
+          size="large"
+        >
+          <Radio value={"PRESENT"}>
+            <Tag color={"green"}>{"Présent(e)"}</Tag>
+          </Radio>
+          <Radio value={"ABSENT"}>
+            <Tag color={"red"}>{"Absent(e)"}</Tag>
+          </Radio>
+        </Radio.Group>
+      </Modal>
+      ;
+    </div>
+  );
 };
 
 export default RepportTable;
