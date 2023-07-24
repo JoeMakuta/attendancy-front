@@ -28,8 +28,6 @@ const Dashboard: React.FC = () => {
   const [students, setStudents] = useRecoilState(studentsAtoms);
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
   const [initLoader, setInitLoader] = useState(false);
-  const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
-  const [showModal1, setShowModal1] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [vacation, setVacation] = useState<"AP" | "AV">("AV");
   const router = useRouter();
@@ -58,8 +56,6 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const [date, setDate] = useState<string>("");
-
   const getAllAttendance = async () => {
     try {
       const Response = await ApiClient.get({
@@ -69,7 +65,6 @@ const Dashboard: React.FC = () => {
       if (Response) {
         console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
-        await setDate(attendances[4].date);
       }
     } catch (error) {
       console.log(error);
@@ -120,8 +115,11 @@ const Dashboard: React.FC = () => {
     <div className="flex gap-6 flex-col  w-full ">
       <div className=" flex justify-between items-center ">
         <h1 className=" font-bold text-2xl ">
-          {"Rapport de la journée du " +
-            attendances[attendances.length - 1]?.date.slice(0, 10)}
+          {`Rapport de la journée du  ${
+            attendances[attendances.length - 1]
+              ? attendances[attendances.length - 1]?.date.slice(0, 10)
+              : ""
+          }`}
         </h1>
         <button
           onClick={() => {
