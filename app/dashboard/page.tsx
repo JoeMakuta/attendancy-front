@@ -58,14 +58,21 @@ const Dashboard: React.FC = () => {
     },
   ];
 
+  const [date, setDate] = useState<string>("");
+
   const getAllAttendance = async () => {
-    const Response = await ApiClient.get({
-      url: "/api/attendance",
-      token: currentUser?.accessToken,
-    });
-    if (Response) {
-      console.log("All Attendances = ", Response.data?.data);
-      await setAttendances(Response.data?.data);
+    try {
+      const Response = await ApiClient.get({
+        url: "/api/attendance",
+        token: currentUser?.accessToken,
+      });
+      if (Response) {
+        console.log("All Attendances = ", Response.data?.data);
+        await setAttendances(Response.data?.data);
+        await setDate(attendances[4].date);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -114,12 +121,7 @@ const Dashboard: React.FC = () => {
       <div className=" flex justify-between items-center ">
         <h1 className=" font-bold text-2xl ">
           {"Rapport de la journée du " +
-            new Date().toLocaleDateString("fr-IN", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            attendances[attendances.length - 1]?.date.slice(0, 10)}
         </h1>
         <button
           onClick={() => {
