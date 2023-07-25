@@ -1,16 +1,18 @@
 import { IResponse } from "@/types/global";
-import { message } from "antd";
+import { Modal, message } from "antd";
 import { AxiosResponse } from "axios";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { ApiClient } from "./apiClient";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
-interface IAdminForm {
+export interface IAdminForm {
   form: {
     name: string;
     email: string;
     password: string;
+    confirmPassword: string;
   };
-  action: "Ajouter" | "Enregister";
+  action: "Ajouter un administrateur" | "Modifier mon profil" | "Modifier mon mot de passe";
   loading: boolean;
   showModal: boolean;
   adminId: string;
@@ -38,11 +40,21 @@ export class AdminModalPortal {
       ...this.state,
       form: {
         ...this.state.form,
-        password: this.state.form.name,
         [target]: e.target.value,
       },
     });
   };
+
+  /* ---------------- Reset Form handler on modal ----------- */
+
+  resetForm = () => {
+    this.dispatcher({
+      ...this.state,
+      form: { name: "", email: "", password: "" , confirmPassword : ""},
+      showModal: false,
+      loading: false,
+    });
+  }
 
   /* --------- Show or hide the modal ----------- */
 
@@ -70,21 +82,22 @@ export class AdminModalPortal {
     try {
       this.setModalLoading(true);
 
+      console.log(this.state.form)
+
       const response: AxiosResponse<
         IResponse<{ name: string; email: string }>
       > = await ApiClient.post({
         url: "api/auth/register",
         token : this.token,
-        data: this.state.form,
+        data: {
+          name: this.state.form.name,
+          password : this.state.form.name,
+          email : this.state.form.email
+        },
       });
 
       if (response.data.success) {
-        this.dispatcher({
-          ...this.state,
-          form: { name: "", email: "", password: "" },
-          showModal: false,
-          loading: false,
-        });
+        this.resetForm()
         message.open({
           key: "notification",
           type: "success",
@@ -92,12 +105,7 @@ export class AdminModalPortal {
         });
       }
     } catch (error) {
-      this.dispatcher({
-        ...this.state,
-        form: { name: "", email: "", password: "" },
-        showModal: false,
-        loading: false,
-      });
+      this.resetForm()
       message.open({
         key: "notification",
         type: "error",
@@ -114,19 +122,17 @@ export class AdminModalPortal {
 
       const response: AxiosResponse<
         IResponse<{ name: string; email: string }>
-      > = await ApiClient.post({
+      > = await ApiClient.put({
         url: `/api/users/update/${id}`,
         token : this.token,
-        data: this.state.form,
+        data: {
+          name : this.state.form.name,
+          email : this.state.form.email
+        },
       });
 
       if (response.data.success) {
-        this.dispatcher({
-          ...this.state,
-          form: { name: "", email: "", password: "" },
-          loading: false,
-          showModal: false,
-        });
+        this.resetForm()
         message.open({
           key: "notification",
           type: "success",
@@ -134,12 +140,7 @@ export class AdminModalPortal {
         });
       }
     } catch (error) {
-      this.dispatcher({
-        ...this.state,
-        form: { name: "", email: "", password: "" },
-        loading: false,
-      });
-      console.log(error);
+      this.resetForm()
       message.open({
         key: "notification",
         type: "error",
@@ -147,4 +148,48 @@ export class AdminModalPortal {
       });
     }
   };
-}
+
+
+  changePassword = async (id : string) => {
+    //Implement change password
+  }
+
+  deleteAccount = async (id : string, token : string , router : AppRouterInstance) => {
+    Modal.confirm({
+      title: "Voulez-vous supprimer votre compte ?",
+      content: "Votre compte sera supprimer definitivement !",
+      okText: "Oui",
+      okType: "danger",
+      cancelText: "Non",
+      async onOk() {
+        try {
+          const Response = await ApiClient.delete({
+            token,
+            url: `/api/users/delete/${id}`,
+          });
+          if (Response) {
+            Modal.success({
+              title: "Success!",
+              content: "Compte supprimé avec success!",
+              centered: true,
+              okType: "default",
+            });
+
+            localStorage.removeItem("user")
+            localStorage.removeItem("accessToken");
+
+            router.push("/");
+          }
+        } catch (error) {
+          Modal.error({
+            title: "error",
+            centered: true,
+            content: "Une erreur est survenu lors de la suppression!",
+            okType: "default",
+          });
+        }
+      },
+      centered: true,
+    
+})
+}}

@@ -13,31 +13,24 @@ import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessTok
 import { IResponse } from "@/types/global";
 import { AxiosResponse } from "axios";
 import { getCurrentUserSelector } from "@/recoil/selectors/currentUser/user";
-import { AdminModalPortal } from "@/helpers/adminModal";
-
-interface IAdminForm {
-  form: {
-    name: string;
-    email: string;
-    password: string;
-  };
-  action: "Ajouter" | "Enregister";
-  loading: boolean;
-  showModal: boolean;
-  adminId: string;
-}
+import { AdminModalPortal, IAdminForm } from "@/helpers/adminModal";
+import { MdOutlineDelete } from "react-icons/md";
+import AdminModalForm from "@/components/users/modalForm";
+import { useRouter } from "next/navigation";
 
 export default function Users(): JSX.Element {
   const [admins, setAdmins] = useRecoilState(usersState);
   const token = useRecoilValue(getAccessTokenSelector);
+  const router = useRouter()
   const currentUser = useRecoilValue(getCurrentUserSelector);
   const [adminModal, setAdminModal] = useState<IAdminForm>({
     form: {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
-    action: "Ajouter",
+    action: "Ajouter un administrateur",
     loading: false,
     showModal: false,
     adminId: "",
@@ -69,7 +62,11 @@ export default function Users(): JSX.Element {
     getAdmins();
   }, [setAdmins, token, adminModal.showModal]);
 
-  const columns: ColumnsType<{ name: string; email: string }> = [
+  const columns: ColumnsType<{
+    _id: string;
+    name: string;
+    email: string;
+  }> = [
     {
       title: "Name",
       dataIndex: "name",
@@ -85,7 +82,13 @@ export default function Users(): JSX.Element {
       <div className="w-full flex items-center justify-between">
         <h1 className=" font-bold text-2xl ">Tous les administrateurs</h1>
         <button
-          onClick={() => adminModalPortal.showModal(true)}
+          onClick={() => {
+            setAdminModal({
+              ...adminModal,
+              action: "Ajouter un administrateur",
+              showModal: true,
+            });
+          }}
           className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white transition-all 
          
           `}
@@ -96,61 +99,7 @@ export default function Users(): JSX.Element {
       </div>
 
       <div className="w-full">
-        <Modal
-          title="Title"
-          open={adminModal.showModal}
-          confirmLoading={adminModal.loading}
-          onCancel={() => {
-            setAdminModal({
-              ...adminModal,
-              form: { name: "", email: "", password: "" },
-              showModal: false,
-            });
-          }}
-          footer={
-            <div className="w-full h-full  items-center flex justify-end">
-              <button
-                type="submit"
-                onClick={
-                  adminModal.action == "Ajouter"
-                    ? adminModalPortal.createAdmin
-                    : () => adminModalPortal.updateAdmin(adminModal.adminId)
-                }
-                className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white`}
-              >
-                {adminModal.loading && (
-                  <AiOutlineLoading3Quarters className="animate-spin" />
-                )}
-                <span>{adminModal.action}</span>{" "}
-              </button>
-            </div>
-          }
-        >
-          <div className="w-full p-3 h-full">
-            <form className=" flex flex-col gap-6 ">
-              <div className="flex flex-col text-start text-sm gap-4 min-w-[300px] w-full ">
-                <div className=" flex flex-col gap-2 ">
-                  <input
-                    type="text"
-                    required={true}
-                    onChange={(e) => adminModalPortal.handleForm(e, "name")}
-                    placeholder="Nom"
-                    className="input-st"
-                  />
-                </div>
-                <div className=" flex flex-col gap-2 ">
-                  <input
-                    type="email"
-                    required={true}
-                    onChange={(e) => adminModalPortal.handleForm(e, "email")}
-                    placeholder="Email"
-                    className="input-st"
-                  />
-                </div>
-              </div>
-            </form>
-          </div>
-        </Modal>
+        <AdminModalForm adminModalForm={adminModalPortal} />
         <Table
           columns={columns}
           scroll={{ y: "50vh" }}
@@ -171,9 +120,14 @@ export default function Users(): JSX.Element {
                       onClick={() => {
                         setAdminModal({
                           ...adminModal,
-                          adminId: "record._id",
-                          action: "Enregister",
+                          adminId: record._id,
+                          action: "Modifier mon profil",
                           showModal: true,
+                          form: {
+                            ...adminModal.form,
+                            name: record.name,
+                            email: record.email,
+                          },
                         });
                         console.log(record);
                       }}
@@ -181,16 +135,43 @@ export default function Users(): JSX.Element {
                     >
                       <FiEdit />
                     </Button>
+                    <Button
+                      onClick={() => {
+                        setAdminModal({
+                          ...adminModal,
+                          adminId: record._id,
+                          action: "Modifier mon mot de passe",
+                          showModal: true,
+                          form: {
+                            ...adminModal.form,
+                            name: record.name,
+                            email: record.email,
+                          },
+                        });
+                        console.log(record);
+                      }}
+                      className=" text-amber-500 flex items-center justify-center gap-1  hover:bg-white hover:text-red-600 "
+                    >
+                      <FiEdit className=" text-xs" /> Mot de pass
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        adminModalPortal.deleteAccount(
+                          admins.filter((el) => el.name == currentUser.name)[0]
+                            ._id,
+                          token,
+                          router
+                        )
+                      }
+                      className=" text-red-600 flex items-center justify-center gap-1  hover:bg-white hover:text-red-600 "
+                    >
+                      <MdOutlineDelete className=" text-lg" />
+                    </Button>
                   </div>
                 ),
               },
             ]}
-            dataSource={[
-              {
-                name: currentUser.name,
-                email: currentUser.email,
-              },
-            ]}
+            dataSource={admins.filter((el) => el.name == currentUser.name)}
           />
         </div>
       </div>

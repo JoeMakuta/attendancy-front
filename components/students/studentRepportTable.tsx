@@ -124,7 +124,7 @@ const StudentRepportTable = () => {
       } = { ...currentStudent };
       delete data._id;
       delete data.__v;
-      const Response = await ApiClient.update({
+      const Response = await ApiClient.put({
         token,
         data: data,
         url: `/api/students/update/${currentStudent._id}`,
