@@ -32,7 +32,7 @@ const Scanner = () => {
 
   const addPresence = async (id: string) => {
     try {
-      const Response = await ApiClient.update({
+      const Response = await ApiClient.put({
         url: "/api/attendance/presence/" + id,
         data: {},
         token,
