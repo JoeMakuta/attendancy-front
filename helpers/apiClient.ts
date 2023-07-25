@@ -47,11 +47,12 @@ export class ApiClient {
     });
   };
 
-  static update = async ({
+  static put = async ({
     url = "",
     data = {},
     token = "",
   } = {}): Promise<AxiosResponse> => {
+
     return await axios({
       baseURL: this.baseUrl,
       url,
