@@ -56,21 +56,7 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const getAllAttendance = async () => {
-    try {
-      const Response = await ApiClient.get({
-        url: "/api/attendance",
-        token: currentUser?.accessToken,
-      });
-      if (Response) {
-        console.log("All Attendances = ", Response.data?.data);
-        await setAttendances(Response.data?.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  
   const initDay = async (vacation: "AP" | "AV") => {
     try {
       setInitLoader(true);
@@ -104,7 +90,21 @@ const Dashboard: React.FC = () => {
       setShowModal(false);
     }
   };
-
+  
+  const getAllAttendance = async () => {
+    try {
+      const Response = await ApiClient.get({
+        url: "/api/attendance",
+        token: currentUser?.accessToken,
+      });
+      if (Response) {
+        console.log("All Attendances = ", Response.data?.data);
+        await setAttendances(Response.data?.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // const yesterday = new Date().setDate(new Date().getDate() - 1);
 
   useEffect(() => {
