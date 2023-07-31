@@ -195,7 +195,6 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
           </Radio>
         </Radio.Group>
       </Modal>
-      ;
     </div>
   );
 };
