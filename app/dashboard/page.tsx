@@ -16,7 +16,7 @@ import { studentsAtoms } from "@/recoil/atoms/students";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-
+import dayjs from "dayjs";
 interface User {
   email: string;
   name: string;
@@ -56,7 +56,6 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  
   const initDay = async (vacation: "AP" | "AV") => {
     try {
       setInitLoader(true);
@@ -90,7 +89,7 @@ const Dashboard: React.FC = () => {
       setShowModal(false);
     }
   };
-  
+
   const getAllAttendance = async () => {
     try {
       const Response = await ApiClient.get({
@@ -147,9 +146,9 @@ const Dashboard: React.FC = () => {
         })}
       </div>
       <h1 className=" font-bold ">Avant-midi </h1>
-      <RepportTable vac={"AV"} />
+      <RepportTable vac={"AV"} date={new Date().toDateString()} />
       <h1 className=" font-bold ">Après-midi </h1>
-      <RepportTable vac={"AP"} />
+      <RepportTable vac={"AP"} date={new Date().toDateString()} />
       <Modal
         centered
         title="Veillez choisir une vacation"
