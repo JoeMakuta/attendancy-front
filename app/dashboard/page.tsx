@@ -16,7 +16,7 @@ import { studentsAtoms } from "@/recoil/atoms/students";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-
+import dayjs from "dayjs";
 interface User {
   email: string;
   name: string;
@@ -56,16 +56,20 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  
-  const initDay = async (vacation: "AP" | "AV") => {
+  const initDay = async () => {
     try {
       setInitLoader(true);
       const Response = await ApiClient.post({
-        data: { vacation },
+        data: { vacation: "AP" },
         token: currentUser?.accessToken,
         url: "/api/attendance/new",
       });
-      if (Response) {
+      const Response1 = await ApiClient.post({
+        data: { vacation: "AV" },
+        token: currentUser?.accessToken,
+        url: "/api/attendance/new",
+      });
+      if (Response && Response1) {
         setShowModal(false);
         Modal.success({
           title: "Success!",
@@ -81,16 +85,14 @@ const Dashboard: React.FC = () => {
       setInitLoader(false);
       Modal.error({
         title: "Erreur!",
-        content: `Vous avez déjà fait l'initialisation des présences pour la vacation ${
-          vacation == "AP" ? "Après-midi !" : "Avant-midi !"
-        } `,
+        content: `Vous avez déjà fait l'initialisation des présences pour cette journée!`,
         centered: true,
         okType: "default",
       });
       setShowModal(false);
     }
   };
-  
+
   const getAllAttendance = async () => {
     try {
       const Response = await ApiClient.get({
@@ -117,7 +119,9 @@ const Dashboard: React.FC = () => {
         <h1 className=" font-bold text-2xl ">
           {`Rapport de la journée du  ${
             attendances[attendances.length - 1]
-              ? attendances[attendances.length - 1]?.date.slice(0, 10)
+              ? new Date(
+                  attendances[attendances.length - 1]?.date
+                ).toLocaleDateString("fr")
               : ""
           }`}
         </h1>
@@ -147,12 +151,12 @@ const Dashboard: React.FC = () => {
         })}
       </div>
       <h1 className=" font-bold ">Avant-midi </h1>
-      <RepportTable vac={"AV"} />
+      <RepportTable vac={"AV"} date={new Date().toDateString()} />
       <h1 className=" font-bold ">Après-midi </h1>
-      <RepportTable vac={"AP"} />
+      <RepportTable vac={"AP"} date={new Date().toDateString()} />
       <Modal
         centered
-        title="Veillez choisir une vacation"
+        title="Initialisation de la journée"
         open={showModal}
         width={400}
         onCancel={() => setShowModal(false)}
@@ -167,13 +171,13 @@ const Dashboard: React.FC = () => {
                 initLoader && "bg-main_color/50"
               } hover:bg-main_color hover:text-white transition-all duration-500 font-bold text-main_color active:bg-black`}
             >
-              <span>Annuler</span>{" "}
+              <span>Non</span>{" "}
             </button>
             <button
               className={`flex items-center justify-center gap-3  p-3 text-base h-10 rounded-lg bg-main_color ${
                 initLoader && "bg-main_color/50"
               } hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
-              onClick={() => initDay(vacation)}
+              onClick={() => initDay()}
             >
               {initLoader && (
                 <AiOutlineLoading3Quarters
@@ -186,14 +190,7 @@ const Dashboard: React.FC = () => {
           </div>,
         ]}
       >
-        <Radio.Group
-          onChange={(e) => setVacation(e.target.value)}
-          value={vacation}
-          size="large"
-        >
-          <Radio value={"AV"}>Avant-midi</Radio>
-          <Radio value={"AP"}>Après-midi</Radio>
-        </Radio.Group>
+        Voulez-vous initialiser la journée ?
       </Modal>
     </div>
   );

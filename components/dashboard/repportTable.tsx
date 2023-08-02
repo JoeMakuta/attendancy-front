@@ -29,7 +29,7 @@ interface DataType {
   vacation: "AP" | "AV";
 }
 
-const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
+const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
   const [rowSelection, setRowSelection] = useState<
     TableRowSelection<IStudentAttendance> | undefined
@@ -40,6 +40,7 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
   const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
   const [currentStudent, setCurrentStudent] = useState("");
   const [showModal1, setShowModal1] = useState(false);
+  const [data, setData] = useState<IAttendance[]>([]);
 
   const columns: ColumnsType<IStudentAttendance> = [
     {
@@ -124,8 +125,7 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
     },
   ];
 
-  const data: IAttendance[] = attendances.filter((elt) => elt.vacation == vac);
-
+  // const data: IAttendance[] =
   const tableColumns = columns.map((item) => ({ ...item, ellipsis }));
 
   const tableProps: TableProps<IStudentAttendance> = {
@@ -140,6 +140,15 @@ const RepportTable = ({ vac }: { vac: "AP" | "AV" }) => {
     scroll: { y: "60vh" },
     // rowClassName : (record) => record.student?
   };
+
+  useEffect(() => {
+    setData(
+      attendances.filter(
+        (elt) =>
+          elt.vacation == vac && new Date(elt.date).toDateString() == date
+      )
+    );
+  }, [date, attendances, vac]);
 
   return (
     <div>
