@@ -46,7 +46,6 @@ const PresencePage = () => {
           placeholder="Selectionner une date"
           format={"YYYY-MM-DD"}
           onChange={onChange}
-          // defaultValue={dayjs().endOf("day")}
           className="w-[200px]"
           size="large"
           disabledDate={(currentDate) => currentDate > dayjs().endOf("day")}
