@@ -21,6 +21,10 @@ import { HiEye } from "react-icons/hi2";
 import { IAttendance } from "@/types/global";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
+import { ApiClient } from "@/helpers/apiClient";
+import { currentUserState } from "@/recoil/atoms/currentUser";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface DataType {
   status: "ABSENT" | "PRESENT";
@@ -38,11 +42,20 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
   const [loader, setLoader] = useRecoilState(loaderState);
   const [ellipsis, setEllipsis] = useState(false);
   const [initLoader, setInitLoader] = useState(false);
-  const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
-  const [currentStudent, setCurrentStudent] = useState("");
+  const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">(
+    "ABSENT"
+  );
+  const [currentStudent, setCurrentStudent] = useState<IStudent>({
+    _id: "",
+    firstname: "",
+    lastname: "",
+    middlename: "",
+    vacation: "AV",
+  });
   const [showModal1, setShowModal1] = useState(false);
   const [data, setData] = useState<IAttendance[]>([]);
-
+  const currentUser = useRecoilValue(currentUserState);
+  const router = useRouter();
   const columns: ColumnsType<IStudentAttendance> = [
     {
       title: "Prénom",
@@ -114,7 +127,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
           <Button
             onClick={() => {
               setShowModal1(true);
-              setCurrentStudent(record.student?.lastname);
+              setCurrentStudent(record.student);
               setPresenceStatut(record?.status);
             }}
             className=" text-main_color  hover:bg-white hover:text-red-600 "
@@ -125,6 +138,60 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       ),
     },
   ];
+
+  const getAllAttendance = async () => {
+    try {
+      setLoader(true);
+      const Response = await ApiClient.get({
+        url: "/api/attendance",
+        token: currentUser?.accessToken,
+      });
+      if (Response) {
+        setLoader(false);
+        console.log("All Attendances = ", Response.data?.data);
+        await setAttendances(Response.data?.data);
+      }
+    } catch (error) {
+      setLoader(false);
+      console.log(error);
+    }
+  };
+
+  const updateAttendance = async (
+    date: string,
+    student: IStudent,
+    status: "ABSENT" | "PRESENT"
+  ) => {
+    setInitLoader(true);
+    try {
+      const Response = await ApiClient.put({
+        url: "/api/attendance/presence/update/" + student._id,
+        data: { date, vacation: student.vacation, status },
+        token: currentUser?.accessToken,
+      });
+      if (Response) {
+        setInitLoader(false);
+        setShowModal1(false);
+        Modal.success({
+          title: "Success!",
+          content: "La présence a été mis à jour avec success!",
+          centered: true,
+          okType: "default",
+        });
+        await getAllAttendance();
+        // router.refresh();
+      }
+    } catch (error) {
+      setInitLoader(false);
+      Modal.error({
+        title: "Erreur!",
+        content: "La présence n'a pas été enregistré!",
+        centered: true,
+        okType: "default",
+      });
+      console.log(error);
+    }
+  };
 
   // const data: IAttendance[] =
   const tableColumns = columns.map((item) => ({ ...item, ellipsis }));
@@ -178,7 +245,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
                 initLoader && "bg-main_color/50"
               } hover:bg-main_color/50 transition-all duration-500 font-bold text-white active:bg-black`}
               onClick={() => {
-                console.log("Update presence.");
+                updateAttendance(date, currentStudent, presenceStatut);
               }}
             >
               {initLoader && (
