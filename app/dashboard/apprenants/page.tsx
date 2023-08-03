@@ -4,6 +4,7 @@ import NewStudentForm from "@/components/students/newStudent";
 import StudentRepportTable from "@/components/students/studentRepportTable";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
+import { loaderState } from "@/recoil/atoms/loader";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { Button, Modal } from "antd";
 import Link from "next/link";
@@ -18,6 +19,7 @@ const Students = () => {
   const [showModal, setShowModal] = useState(false);
   const [students, setStudents] = useRecoilState(studentsAtoms);
   const router = useRouter();
+  const [loader, setLoader] = useRecoilState<boolean>(loaderState);
 
   return (
     <section className=" flex flex-col gap-4 ">

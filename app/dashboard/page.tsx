@@ -17,6 +17,7 @@ import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import { loaderState } from "@/recoil/atoms/loader";
 interface User {
   email: string;
   name: string;
@@ -31,6 +32,7 @@ const Dashboard: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [vacation, setVacation] = useState<"AP" | "AV">("AV");
   const router = useRouter();
+  const [loader, setLoader] = useRecoilState<boolean>(loaderState);
 
   const cards: ICard[] = [
     {
@@ -95,6 +97,7 @@ const Dashboard: React.FC = () => {
 
   const getAllAttendance = async () => {
     try {
+      setLoader(true);
       const Response = await ApiClient.get({
         url: "/api/attendance",
         token: currentUser?.accessToken,
@@ -103,7 +106,9 @@ const Dashboard: React.FC = () => {
         console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
+      setLoader(false);
     } catch (error) {
+      setLoader(false);
       console.log(error);
     }
   };

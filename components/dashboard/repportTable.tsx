@@ -20,6 +20,7 @@ import { AiOutlineDelete, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { HiEye } from "react-icons/hi2";
 import { IAttendance } from "@/types/global";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
+import { loaderState } from "@/recoil/atoms/loader";
 
 interface DataType {
   status: "ABSENT" | "PRESENT";
@@ -34,7 +35,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
   const [rowSelection, setRowSelection] = useState<
     TableRowSelection<IStudentAttendance> | undefined
   >({});
-
+  const [loader, setLoader] = useRecoilState(loaderState);
   const [ellipsis, setEllipsis] = useState(false);
   const [initLoader, setInitLoader] = useState(false);
   const [presenceStatut, setPresenceStatut] = useState<"ABSENT" | "PRESENT">();
@@ -130,7 +131,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
 
   const tableProps: TableProps<IStudentAttendance> = {
     bordered: true,
-    loading: attendances ? false : true,
+    loading: loader,
     size: "middle",
     showHeader: true,
     rowSelection,
