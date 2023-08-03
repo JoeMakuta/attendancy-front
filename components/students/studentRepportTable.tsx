@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, QRCode, Space, Table, Tag, message } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import type {
   ExpandableConfig,
   TableRowSelection,
 } from "antd/es/table/interface";
-import { BiSortDown } from "react-icons/bi";
+import { BiLoaderAlt, BiSortDown } from "react-icons/bi";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IStudent } from "@/types/global";
@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { setInterval, setTimeout } from "timers/promises";
 import { ok } from "assert";
 import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
+import { loaderState } from "@/recoil/atoms/loader";
 
 const { confirm } = Modal;
 
@@ -38,6 +39,7 @@ interface DataType {
 const StudentRepportTable = () => {
   const [students, setStudents] = useRecoilState(studentsAtoms);
   const currentUser = useRecoilValue(currentUserState);
+  const [loader, setLoader] = useRecoilState<boolean>(loaderState);
   const [rowSelection, setRowSelection] = useState<
     TableRowSelection<IStudent> | undefined
   >({});
@@ -59,14 +61,27 @@ const StudentRepportTable = () => {
   const [ellipsis, setEllipsis] = useState(false);
 
   const getAllStudents = async () => {
-    const Response = await ApiClient.get({
-      url: "/api/students",
-      token: currentUser?.accessToken,
-    });
-    if (Response) {
-      await setStudents(Response.data?.data);
+    try {
+      setLoader(true);
+      const Response = await ApiClient.get({
+        url: "/api/students",
+        token: currentUser?.accessToken,
+      });
+
+      if (Response) {
+        await setStudents(Response.data?.data);
+      }
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      console.log(error);
     }
   };
+
+  useEffect(() => {
+    getAllStudents();
+  }, []);
 
   const showDeleteConfirm = (id: string) => {
     confirm({
@@ -165,9 +180,9 @@ const StudentRepportTable = () => {
       .getElementById("myqrcode")
       ?.querySelector<HTMLCanvasElement>("canvas");
     if (canvas) {
-      const url = canvas.toDataURL();
+      const url = canvas.toDataURL("image/jpeg", 10);
       const a = document.createElement("a");
-      a.download = "QRCode.png";
+      a.download = `${currentStudent.firstname + currentStudent.lastname}.jpeg`;
       a.href = url;
       document.body.appendChild(a);
       a.click();
@@ -253,7 +268,7 @@ const StudentRepportTable = () => {
 
   const tableProps: TableProps<IStudent> = {
     bordered: true,
-    loading: students ? false : true,
+    loading: loader,
     size: "middle",
     showHeader: true,
     rowSelection,
@@ -271,6 +286,9 @@ const StudentRepportTable = () => {
         title="Details de l'apprenant"
         open={open}
         width={800}
+        onCancel={() => {
+          setOpen(false);
+        }}
         footer={[
           <Button
             key="back"
@@ -289,9 +307,10 @@ const StudentRepportTable = () => {
           <div className=" flex gap-6">
             <div id="myqrcode">
               <QRCode
-                size={250}
+                size={400}
                 value={qrCodeValue}
                 style={{ marginBottom: 16 }}
+                bgColor="white"
               />
               {qrCodeValue !== "" ? (
                 <Button
@@ -340,6 +359,9 @@ const StudentRepportTable = () => {
         centered
         title="Modifier un apprenant"
         open={open1}
+        onCancel={() => {
+          setOpen1(false);
+        }}
         width={400}
         footer={null}
       >

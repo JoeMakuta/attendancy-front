@@ -3,6 +3,7 @@ import RepportTable from "@/components/dashboard/repportTable";
 import { ApiClient } from "@/helpers/apiClient";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { currentUserState } from "@/recoil/atoms/currentUser";
+import { loaderState } from "@/recoil/atoms/loader";
 import { DatePicker, DatePickerProps } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -12,18 +13,22 @@ const PresencePage = () => {
   const currentUser = useRecoilValue(currentUserState);
   const [date, setDate] = useState<string>(new Date().toDateString());
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
+  const [loader, setLoader] = useRecoilState<boolean>(loaderState);
 
   const getAllAttendance = async () => {
     try {
+      setLoader(true);
       const Response = await ApiClient.get({
         url: "/api/attendance",
         token: currentUser?.accessToken,
       });
       if (Response) {
+        setLoader(false);
         console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
     } catch (error) {
+      setLoader(false);
       console.log(error);
     }
   };
