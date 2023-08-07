@@ -17,12 +17,14 @@ import { AdminModalPortal, IAdminForm } from "@/helpers/adminModal";
 import { MdOutlineDelete } from "react-icons/md";
 import AdminModalForm from "@/components/users/modalForm";
 import { useRouter } from "next/navigation";
+import { currentUserState } from "@/recoil/atoms/currentUser";
 
 export default function Users(): JSX.Element {
   const [admins, setAdmins] = useRecoilState(usersState);
   const token = useRecoilValue(getAccessTokenSelector);
   const router = useRouter()
-  const currentUser = useRecoilValue(getCurrentUserSelector);
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+  const user = useRecoilValue(getCurrentUserSelector);
   const [adminModal, setAdminModal] = useState<IAdminForm>({
     form: {
       name: "",
@@ -78,6 +80,7 @@ export default function Users(): JSX.Element {
     },
   ];
 
+
   return (
     <div className="w-full h-full">
       <div className="w-full flex items-center justify-between">
@@ -100,11 +103,11 @@ export default function Users(): JSX.Element {
       </div>
 
       <div className="w-full">
-        <AdminModalForm adminModalForm={adminModalPortal} />
+        <AdminModalForm router={router} currentUser={currentUser} userStateSetter={setCurrentUser} adminModalForm={adminModalPortal} />
         <Table
           columns={columns}
           scroll={{ y: "50vh" }}
-          dataSource={admins.filter((el) => el.name != currentUser.name)}
+          dataSource={admins.filter((el) => el.name != user.name)}
         />
         <div className="w-full">
           <h1 className=" font-bold text-2xl ">Moi</h1>
@@ -130,7 +133,6 @@ export default function Users(): JSX.Element {
                             email: record.email,
                           },
                         });
-                        console.log(record);
                       }}
                       className=" text-main_color  hover:bg-white hover:text-red-600 "
                     >
@@ -149,7 +151,6 @@ export default function Users(): JSX.Element {
                             email: record.email,
                           },
                         });
-                        console.log(record);
                       }}
                       className=" text-amber-500 flex items-center justify-center gap-1  hover:bg-white hover:text-red-600 "
                     >
@@ -158,7 +159,7 @@ export default function Users(): JSX.Element {
                     <Button
                       onClick={() =>
                         adminModalPortal.deleteAccount(
-                          admins.filter((el) => el.name == currentUser.name)[0]
+                          admins.filter((el) => el.name == user.name)[0]
                             ._id,
                           token,
                           router
@@ -172,7 +173,7 @@ export default function Users(): JSX.Element {
                 ),
               },
             ]}
-            dataSource={admins.filter((el) => el.name == currentUser.name)}
+            dataSource={admins.filter((el) => el.name == user.name)}
           />
         </div>
       </div>

@@ -1,9 +1,6 @@
 import { currentUserState } from "@/recoil/atoms/currentUser";
-import { Avatar, Dropdown, MenuProps, Space } from "antd";
+import { Dropdown, MenuProps} from "antd";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { AiOutlineUser } from "react-icons/ai";
-import { BiSolidUserAccount } from "react-icons/bi";
 import { FiLogOut } from "react-icons/fi";
 import { useRecoilValue } from "recoil";
 

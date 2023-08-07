@@ -102,13 +102,11 @@ const Dashboard: React.FC = () => {
         token: currentUser?.accessToken,
       });
       if (Response) {
-        console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
       setLoader(false);
     } catch (error) {
       setLoader(false);
-      console.log(error);
     }
   };
   // const yesterday = new Date().setDate(new Date().getDate() - 1);

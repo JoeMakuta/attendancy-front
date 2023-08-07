@@ -2,28 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Radio, Space, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import type {
-  ExpandableConfig,
   TableRowSelection,
 } from "antd/es/table/interface";
-import { BiSortDown } from "react-icons/bi";
-import { studentsAtoms } from "@/recoil/atoms/students";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IStudent, IStudentAttendance, IVacation } from "@/types/global";
-import {
-  MdOutlineViewDay,
-  MdTableView,
-  MdViewColumn,
-  MdViewList,
-} from "react-icons/md";
-import { FiDelete, FiEdit } from "react-icons/fi";
-import { AiOutlineDelete, AiOutlineLoading3Quarters } from "react-icons/ai";
-import { HiEye } from "react-icons/hi2";
+import { FiEdit } from "react-icons/fi";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IAttendance } from "@/types/global";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
-import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 
 interface DataType {
@@ -148,12 +137,10 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       });
       if (Response) {
         setLoader(false);
-        console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
     } catch (error) {
       setLoader(false);
-      console.log(error);
     }
   };
 
@@ -189,7 +176,6 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
         centered: true,
         okType: "default",
       });
-      console.log(error);
     }
   };
 

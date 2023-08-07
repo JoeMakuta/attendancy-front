@@ -1,5 +1,7 @@
 import { AdminModalPortal } from "@/helpers/adminModal";
+import { IUser } from "@/types/global";
 import { Modal } from "antd";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { Dispatch, SetStateAction, useState } from "react";
 import {
   AiFillEye,
@@ -10,9 +12,12 @@ import { ObjectType } from "typescript";
 
 interface Props {
   adminModalForm: AdminModalPortal;
+  currentUser: IUser;
+  userStateSetter : (valOrUpdater: IUser | ((currVal: IUser) => IUser)) => void,
+  router : AppRouterInstance
 }
 
-export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
+export default function AdminModalForm({ adminModalForm, userStateSetter, currentUser, router }: Props): JSX.Element {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [showPassword, setShowPassword] = useState({
@@ -84,8 +89,9 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
                 ? adminModalForm.createAdmin
                 : adminModalForm.state.action == "Modifier mon mot de passe"
                 ? () =>
-                    adminModalForm.changePassword(adminModalForm.state.adminId)
-                : () => adminModalForm.updateAdmin(adminModalForm.state.adminId)
+                    adminModalForm.changePassword(adminModalForm.state.adminId, router)
+                : () => adminModalForm.updateAdmin(adminModalForm.state.adminId,currentUser, userStateSetter
+                  )
             }
             className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white`}
           >
