@@ -10,6 +10,7 @@ export interface IAdminForm {
     name: string;
     email: string;
     password: string;
+    newPassword: string
     confirmPassword: string;
   };
   action: "Ajouter un administrateur" | "Modifier mon profil" | "Modifier mon mot de passe";
@@ -50,7 +51,7 @@ export class AdminModalPortal {
   resetForm = () => {
     this.dispatcher({
       ...this.state,
-      form: { name: "", email: "", password: "" , confirmPassword : ""},
+      form: { name: "", email: "", password: "" , confirmPassword : "", newPassword : ""},
       showModal: false,
       loading: false,
     });
@@ -151,7 +152,48 @@ export class AdminModalPortal {
 
 
   changePassword = async (id : string) => {
-    //Implement change password
+    try {
+
+      const isMatch = this.state.form.confirmPassword == this.state.form.newPassword
+
+      this.setModalLoading(true);
+
+      console.log(isMatch,this.state.form.confirmPassword,this.state.form.newPassword)
+
+      if(isMatch){
+
+        
+        const response: AxiosResponse<
+        IResponse<{ name: string; email: string }>
+        > = await ApiClient.put({
+          url: `/api/users/password/update/${id}`,
+          token : this.token,
+          data: {
+            old : this.state.form.password,
+            new : this.state.form.newPassword
+          },
+        });
+        
+        if (response.data.success) {
+          this.resetForm()
+          message.open({
+            key: "notification",
+            type: "success",
+            content: "Votre mot de pass a été modifier avec succès",
+          });
+        }
+      }else{
+        throw new Error('Password mismatch')
+      }
+    } catch (error) {
+      console.log(error)
+      this.resetForm()
+      message.open({
+        key: "notification",
+        type: "error",
+        content: "Une erreur est survenu lors de la suppression!",
+      });
+    }
   }
 
   deleteAccount = async (id : string, token : string , router : AppRouterInstance) => {

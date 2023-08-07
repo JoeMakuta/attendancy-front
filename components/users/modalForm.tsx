@@ -6,14 +6,20 @@ import {
   AiFillEyeInvisible,
   AiOutlineLoading3Quarters,
 } from "react-icons/ai";
+import { ObjectType } from "typescript";
 
 interface Props {
   adminModalForm: AdminModalPortal;
 }
 
 export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
-  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [showPassword, setShowPassword] = useState({
+    old: false,
+    new: false,
+    confirm: false,
+  });
 
   const isChangePassword =
     adminModalForm.state.action == "Modifier mon mot de passe";
@@ -21,19 +27,27 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
   function TogglePassword({
     setShow,
     show,
+    target,
   }: {
-    setShow: Dispatch<SetStateAction<boolean>>;
-    show: boolean;
+    setShow: Dispatch<
+      SetStateAction<{ old: boolean; new: boolean; confirm: boolean }>
+    >;
+    show: { old: boolean; new: boolean; confirm: boolean };
+    target: "old" | "new" | "confirm";
   }): JSX.Element {
     return (
       <button
         className=" absolute top-1/2 -translate-y-1/2 right-3"
         type="button"
         onClick={() => {
-          show ? setShow(false) : setShow(true);
+          setShow({ ...show, [target]: !show[target] });
         }}
       >
-        {show ? <AiFillEyeInvisible size={25} /> : <AiFillEye size={25} />}
+        {show[target] ? (
+          <AiFillEyeInvisible size={25} />
+        ) : (
+          <AiFillEye size={25} />
+        )}
       </button>
     );
   }
@@ -45,6 +59,7 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
         name: "",
         email: "",
         password: "",
+        newPassword: "",
         confirmPassword: "",
       },
       showModal: false,
@@ -67,6 +82,9 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
             onClick={
               adminModalForm.state.action == "Ajouter un administrateur"
                 ? adminModalForm.createAdmin
+                : adminModalForm.state.action == "Modifier mon mot de passe"
+                ? () =>
+                    adminModalForm.changePassword(adminModalForm.state.adminId)
                 : () => adminModalForm.updateAdmin(adminModalForm.state.adminId)
             }
             className={`p-4 font-bold bg-white rounded-md text-main_color border border-main_color flex justify-center items-center gap-2 self-start h-10 hover:bg-main_color hover:text-white`}
@@ -82,15 +100,46 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
       <div className="w-full h-full">
         <form className=" flex flex-col gap-6 ">
           <div className="flex flex-col text-start text-sm gap-4 min-w-[300px] w-full ">
+            {isChangePassword && (
+              <div className=" flex flex-col gap-2 ">
+                <label htmlFor="newPassword">Ancien mot de pass</label>
+                <div className=" relative w-full">
+                  <input
+                    type={
+                      isChangePassword
+                        ? showPassword.old
+                          ? "text"
+                          : "password"
+                        : "text"
+                    }
+                    id="newPassword"
+                    value={adminModalForm.state.form.password}
+                    required={true}
+                    onChange={(e) =>
+                      adminModalForm.handleForm(e, "password")
+                    }
+                    placeholder="Entrer votre ancien mot de pass"
+                    className="input-st"
+                  />
+                  {isChangePassword && (
+                    <TogglePassword
+                      setShow={setShowPassword}
+                      show={showPassword}
+                      target="old"
+                    />
+                  )}
+                </div>
+              </div>
+            )}
             <div className=" flex flex-col gap-2 ">
-              <label htmlFor="name">
+              <label htmlFor={isChangePassword ? "password" : "name"}>
                 {isChangePassword ? "Mot de pass" : "Nom"}
               </label>
               <div className=" relative w-full">
                 <input
                   type={
                     isChangePassword
-                      ? showPassword
+                      ? showPassword.new
                         ? "text"
                         : "password"
                       : "text"
@@ -98,14 +147,14 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
                   id={isChangePassword ? "password" : "name"}
                   value={
                     isChangePassword
-                      ? adminModalForm.state.form.password
+                      ? adminModalForm.state.form.newPassword
                       : adminModalForm.state.form.name
                   }
                   required={true}
                   onChange={(e) =>
                     adminModalForm.handleForm(
                       e,
-                      isChangePassword ? "password" : "name"
+                      isChangePassword ? "newPassword" : "name"
                     )
                   }
                   placeholder={
@@ -117,19 +166,20 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
                   <TogglePassword
                     setShow={setShowPassword}
                     show={showPassword}
+                    target="new"
                   />
                 )}
               </div>
             </div>
             <div className=" flex flex-col gap-2 ">
-              <label htmlFor="email">
+              <label htmlFor={isChangePassword ? "confirmPassword" : "Email"}>
                 {isChangePassword ? "Confirmez le mot de pass" : "Email"}
               </label>
               <div className=" relative w-full">
                 <input
                   type={
                     isChangePassword
-                      ? showConfirmPassword
+                      ? showPassword.confirm
                         ? "text"
                         : "password"
                       : "email"
@@ -156,8 +206,9 @@ export default function AdminModalForm({ adminModalForm }: Props): JSX.Element {
                 />
                 {isChangePassword && (
                   <TogglePassword
-                    setShow={setShowConfirmPassword}
-                    show={showConfirmPassword}
+                    setShow={setShowPassword}
+                    show={showPassword}
+                    target="confirm"
                   />
                 )}
               </div>

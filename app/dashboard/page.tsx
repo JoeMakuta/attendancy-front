@@ -16,7 +16,6 @@ import { studentsAtoms } from "@/recoil/atoms/students";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-import dayjs from "dayjs";
 import { loaderState } from "@/recoil/atoms/loader";
 interface User {
   email: string;

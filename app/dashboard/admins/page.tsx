@@ -28,6 +28,7 @@ export default function Users(): JSX.Element {
       name: "",
       email: "",
       password: "",
+      newPassword : "",
       confirmPassword: "",
     },
     action: "Ajouter un administrateur",
