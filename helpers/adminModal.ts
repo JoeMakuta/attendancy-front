@@ -1,4 +1,4 @@
-import { IResponse } from "@/types/global";
+import { IResponse, IUser } from "@/types/global";
 import { Modal, message } from "antd";
 import { AxiosResponse } from "axios";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
@@ -10,27 +10,33 @@ export interface IAdminForm {
     name: string;
     email: string;
     password: string;
+    newPassword: string;
     confirmPassword: string;
   };
-  action: "Ajouter un administrateur" | "Modifier mon profil" | "Modifier mon mot de passe";
+  action:
+    | "Ajouter un administrateur"
+    | "Modifier mon profil"
+    | "Modifier mon mot de passe";
   loading: boolean;
   showModal: boolean;
   adminId: string;
 }
 
-
 export class AdminModalPortal {
-
-  state: IAdminForm
+  state: IAdminForm;
   dispatcher: Dispatch<SetStateAction<IAdminForm>>;
   token: string;
 
   /* ========== Init the modal form portal ======== */
 
-  constructor(state : IAdminForm , dispatcher: Dispatch<SetStateAction<IAdminForm>>, token : string) {
-    this.state = state
+  constructor(
+    state: IAdminForm,
+    dispatcher: Dispatch<SetStateAction<IAdminForm>>,
+    token: string
+  ) {
+    this.state = state;
     this.dispatcher = dispatcher;
-    this.token = token
+    this.token = token;
   }
 
   /* --------- Form handler on modal ----------- */
@@ -50,25 +56,27 @@ export class AdminModalPortal {
   resetForm = () => {
     this.dispatcher({
       ...this.state,
-      form: { name: "", email: "", password: "" , confirmPassword : ""},
+      form: {
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        newPassword: "",
+      },
       showModal: false,
       loading: false,
     });
-  }
+  };
 
   /* --------- Show or hide the modal ----------- */
 
-  showModal = (
-    value: boolean
-  ) => {
+  showModal = (value: boolean) => {
     this.dispatcher({ ...this.state, showModal: value });
   };
 
   /* --------- Set the loading on modal ----------- */
 
-  setModalLoading = (
-    value: boolean
-  ) => {
+  setModalLoading = (value: boolean) => {
     this.dispatcher({
       ...this.state,
       loading: value,
@@ -77,27 +85,25 @@ export class AdminModalPortal {
 
   /* --------- Create an admin ----------- */
 
-  createAdmin = async (
-  ) => {
+  createAdmin = async () => {
     try {
       this.setModalLoading(true);
 
-      console.log(this.state.form)
 
       const response: AxiosResponse<
         IResponse<{ name: string; email: string }>
       > = await ApiClient.post({
         url: "api/auth/register",
-        token : this.token,
+        token: this.token,
         data: {
           name: this.state.form.name,
-          password : this.state.form.name,
-          email : this.state.form.email
+          password: this.state.form.name,
+          email: this.state.form.email,
         },
       });
 
       if (response.data.success) {
-        this.resetForm()
+        this.resetForm();
         message.open({
           key: "notification",
           type: "success",
@@ -105,18 +111,22 @@ export class AdminModalPortal {
         });
       }
     } catch (error) {
-      this.resetForm()
+      this.resetForm();
       message.open({
         key: "notification",
         type: "error",
-        content: "Une erreur est survenu lors de la suppression!",
+        content: "Une erreur est survenu lors de l'ajout d'un nouveau admin!",
       });
     }
   };
 
   /* --------- Update an admin ----------- */
 
-  updateAdmin = async (id: string) => {
+  updateAdmin = async (
+    id: string,
+    currentUser: IUser,
+    currentUserSetter: (valOrUpdater: IUser | ((currVal: IUser) => IUser)) => void
+  ) => {
     try {
       this.setModalLoading(true);
 
@@ -124,37 +134,93 @@ export class AdminModalPortal {
         IResponse<{ name: string; email: string }>
       > = await ApiClient.put({
         url: `/api/users/update/${id}`,
-        token : this.token,
+        token: this.token,
         data: {
-          name : this.state.form.name,
-          email : this.state.form.email
+          name: this.state.form.name,
+          email: this.state.form.email,
         },
       });
 
       if (response.data.success) {
-        this.resetForm()
+        this.resetForm();
         message.open({
           key: "notification",
           type: "success",
           content: "Enregistré avec succès",
         });
+
+        const { name, email } = response.data.data;
+
+        currentUserSetter({
+          ...currentUser,
+          user: { ...currentUser.user, name, email },
+        });
       }
     } catch (error) {
-      this.resetForm()
+      this.resetForm();
       message.open({
         key: "notification",
         type: "error",
-        content: "Une erreur est survenu lors de la suppression!",
+        content: "Une erreur est survenu lors de la mise à jour de votre profil!",
       });
     }
   };
 
+  changePassword = async (id: string, router : AppRouterInstance) => {
+    try {
+      const isMatch =
+        this.state.form.confirmPassword == this.state.form.newPassword;
 
-  changePassword = async (id : string) => {
-    //Implement change password
-  }
+      this.setModalLoading(true);
 
-  deleteAccount = async (id : string, token : string , router : AppRouterInstance) => {
+
+      if (isMatch) {
+        const response: AxiosResponse<
+          IResponse<{ name: string; email: string }>
+        > = await ApiClient.put({
+          url: `/api/users/password/update/${id}`,
+          token: this.token,
+          data: {
+            old: this.state.form.password,
+            new: this.state.form.newPassword,
+          },
+        });
+
+        if (response.data.success) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("accessToken");
+          this.resetForm();
+          message.open({
+            key: "notification",
+            type: "success",
+            content: "Votre mot de pass a été modifier avec succès",
+          });
+
+          router.push('/')
+        }
+      } else {
+        this.setModalLoading(false);
+        message.open({
+          key: "notification",
+          type: "error",
+          content: "Les mot ne pass ne correspondent pas",
+        });
+      }
+    } catch (error) {
+      this.resetForm();
+      message.open({
+        key: "notification",
+        type: "error",
+        content: "Une erreur est survenu lors de la modification de votre mot pass!",
+      });
+    }
+  };
+
+  deleteAccount = async (
+    id: string,
+    token: string,
+    router: AppRouterInstance
+  ) => {
     Modal.confirm({
       title: "Voulez-vous supprimer votre compte ?",
       content: "Votre compte sera supprimer definitivement !",
@@ -175,7 +241,7 @@ export class AdminModalPortal {
               okType: "default",
             });
 
-            localStorage.removeItem("user")
+            localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
 
             router.push("/");
@@ -184,12 +250,12 @@ export class AdminModalPortal {
           Modal.error({
             title: "error",
             centered: true,
-            content: "Une erreur est survenu lors de la suppression!",
+            content: "Une erreur est survenu lors de la suppression de votre compte!",
             okType: "default",
           });
         }
       },
       centered: true,
-    
-})
-}}
+    });
+  };
+}

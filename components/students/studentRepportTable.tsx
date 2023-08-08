@@ -1,28 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Button, QRCode, Space, Table, Tag, message } from "antd";
+import { Button, QRCode, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import type {
-  ExpandableConfig,
   TableRowSelection,
 } from "antd/es/table/interface";
-import { BiLoaderAlt, BiSortDown } from "react-icons/bi";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IStudent } from "@/types/global";
 import { FiEdit } from "react-icons/fi";
 import {
-  AiFillExclamationCircle,
   AiOutlineDelete,
   AiOutlineLoading3Quarters,
 } from "react-icons/ai";
-import { HiExclamationCircle, HiEye } from "react-icons/hi2";
+import {  HiEye } from "react-icons/hi2";
 import { Modal } from "antd";
-import { TbExclamationMark } from "react-icons/tb";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { useRouter } from "next/navigation";
-import { setInterval, setTimeout } from "timers/promises";
-import { ok } from "assert";
 import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
 import { loaderState } from "@/recoil/atoms/loader";
 
@@ -75,7 +69,6 @@ const StudentRepportTable = () => {
     } catch (error) {
       setLoader(false);
 
-      console.log(error);
     }
   };
 
@@ -156,7 +149,6 @@ const StudentRepportTable = () => {
         await getAllStudents();
       }
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
       Modal.error({
         title: "Erreur",

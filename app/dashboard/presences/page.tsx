@@ -24,12 +24,10 @@ const PresencePage = () => {
       });
       if (Response) {
         setLoader(false);
-        console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
     } catch (error) {
       setLoader(false);
-      console.log(error);
     }
   };
 

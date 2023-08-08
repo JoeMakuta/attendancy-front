@@ -16,7 +16,6 @@ import { studentsAtoms } from "@/recoil/atoms/students";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-import dayjs from "dayjs";
 import { loaderState } from "@/recoil/atoms/loader";
 interface User {
   email: string;
@@ -103,13 +102,11 @@ const Dashboard: React.FC = () => {
         token: currentUser?.accessToken,
       });
       if (Response) {
-        console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
       setLoader(false);
     } catch (error) {
       setLoader(false);
-      console.log(error);
     }
   };
   // const yesterday = new Date().setDate(new Date().getDate() - 1);

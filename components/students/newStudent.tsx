@@ -2,7 +2,7 @@
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { studentsAtoms } from "@/recoil/atoms/students";
-import { Modal, message } from "antd";
+import { Modal } from "antd";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
