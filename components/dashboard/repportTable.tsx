@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Radio, Space, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
-import type {
-  TableRowSelection,
-} from "antd/es/table/interface";
+import type { TableRowSelection } from "antd/es/table/interface";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IStudent, IStudentAttendance, IVacation } from "@/types/global";
 import { FiEdit } from "react-icons/fi";
@@ -209,7 +207,12 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       <Table {...tableProps} />
       <Modal
         centered
-        title={"Modifier la présence de " + currentStudent}
+        title={
+          "Modifier la présence de " +
+          currentStudent.firstname +
+          " " +
+          currentStudent.lastname
+        }
         open={showModal1}
         width={400}
         onCancel={() => setShowModal1(false)}

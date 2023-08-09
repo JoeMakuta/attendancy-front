@@ -11,8 +11,10 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 const PresencePage = () => {
   const currentUser = useRecoilValue(currentUserState);
-  const [date, setDate] = useState<string>(new Date().toDateString());
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
+  const [date, setDate] = useState<string>(
+    new Date(attendances[attendances.length - 1]?.date).toDateString()
+  );
   const [loader, setLoader] = useRecoilState<boolean>(loaderState);
 
   const getAllAttendance = async () => {
@@ -34,7 +36,6 @@ const PresencePage = () => {
   const onChange: DatePickerProps["onChange"] = (value, dateString) => {
     setDate(new Date(dateString).toDateString());
   };
-  // const yesterday = new Date().setDate(new Date().getDate() - 1);
 
   useEffect(() => {
     getAllAttendance();
@@ -46,7 +47,7 @@ const PresencePage = () => {
       <div className=" flex gap-6 justify-start items-center">
         <h2>Selectionner une date : </h2>
         <DatePicker
-          placeholder="Selectionner une date"
+          placeholder={attendances[attendances.length - 1]?.date.slice(0, 10)}
           format={"YYYY-MM-DD"}
           onChange={onChange}
           className="w-[200px]"

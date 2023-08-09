@@ -7,7 +7,13 @@ import { Button, Card, Modal, Radio, message } from "antd";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { ICard, IStudent, IVacation } from "@/types/global";
+import {
+  IAttendance,
+  ICard,
+  IStudent,
+  IStudentAttendance,
+  IVacation,
+} from "@/types/global";
 import { PiStudent, PiStudentLight } from "react-icons/pi";
 import { FiArrowDown, FiArrowUp, FiPlusCircle } from "react-icons/fi";
 import axios, { Axios, AxiosResponse, AxiosResponseHeaders } from "axios";
@@ -25,28 +31,40 @@ interface User {
 
 const Dashboard: React.FC = () => {
   const currentUser = useRecoilValue(currentUserState);
-  const [students, setStudents] = useRecoilState(studentsAtoms);
-  const [attendances, setAttendances] = useRecoilState(attendacesAtom);
-  const [initLoader, setInitLoader] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [students, setStudents] = useRecoilState<IStudent[]>(studentsAtoms);
+  const [attendances, setAttendances] =
+    useRecoilState<IAttendance[]>(attendacesAtom);
+  const [initLoader, setInitLoader] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [vacation, setVacation] = useState<"AP" | "AV">("AV");
   const router = useRouter();
   const [loader, setLoader] = useRecoilState<boolean>(loaderState);
+
+  const [numberPresence, setNumberPresence] = useState<IStudentAttendance[]>(
+    attendances[attendances.length - 1]?.students.filter(
+      (elt) => elt.status == "PRESENT"
+    )
+  );
+  const [numberAbsence, setNumberAbsence] = useState<IStudentAttendance[]>(
+    attendances[attendances.length - 1]?.students.filter(
+      (elt) => elt.status == "ABSENT"
+    )
+  );
 
   const cards: ICard[] = [
     {
       icon: <FiArrowUp />,
       status: true,
       suffix: "%",
-      title: "Presences",
-      value: 40,
+      title: "Présences",
+      value: ((numberPresence?.length * 100) / students?.length) | 0,
     },
     {
       icon: <FiArrowDown />,
       status: false,
       suffix: "%",
       title: "Absences",
-      value: 40,
+      value: ((numberAbsence?.length * 100) / students?.length) | 0,
     },
     {
       icon: <PiStudent />,
@@ -113,18 +131,29 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     getAllAttendance();
+    setNumberPresence(
+      attendances[attendances?.length - 1]?.students.filter(
+        (elt) => elt.status == "PRESENT"
+      )
+    );
+    setNumberAbsence(
+      attendances[attendances?.length - 1]?.students.filter(
+        (elt) => elt.status == "ABSENT"
+      )
+    );
   }, [currentUser]);
 
   return (
     <div className="flex gap-6 flex-col  w-full ">
       <div className=" flex justify-between items-center ">
         <h1 className=" font-bold text-2xl ">
-          {`Rapport de la journée du  ${
+          {`${
             attendances[attendances.length - 1]
-              ? new Date(
+              ? "Rapport de la journée du " +
+                new Date(
                   attendances[attendances.length - 1]?.date
                 ).toLocaleDateString("fr")
-              : ""
+              : "Chargement ..."
           }`}
         </h1>
         <button
@@ -153,9 +182,19 @@ const Dashboard: React.FC = () => {
         })}
       </div>
       <h1 className=" font-bold ">Avant-midi </h1>
-      <RepportTable vac={"AV"} date={new Date().toDateString()} />
+      <RepportTable
+        vac={"AV"}
+        date={new Date(
+          attendances[attendances.length - 1]?.date
+        ).toDateString()}
+      />
       <h1 className=" font-bold ">Après-midi </h1>
-      <RepportTable vac={"AP"} date={new Date().toDateString()} />
+      <RepportTable
+        vac={"AP"}
+        date={new Date(
+          attendances[attendances.length - 1]?.date
+        ).toDateString()}
+      />
       <Modal
         centered
         title="Initialisation de la journée"
