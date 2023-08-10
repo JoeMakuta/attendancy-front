@@ -5,9 +5,7 @@ import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
 import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
 import { QrScanner } from "@yudiel/react-qr-scanner";
-import { Divider, Modal } from "antd";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { Modal } from "antd";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
@@ -27,13 +25,10 @@ const Scanner = () => {
       if (Response) {
         setLoader(false);
 
-        console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
     } catch (error) {
       setLoader(false);
-
-      console.log(error);
     }
   };
 
@@ -68,7 +63,7 @@ const Scanner = () => {
 
   return (
     <div className=" w-full h-full flex justify-center items-center ">
-      <div className="w-[30vw] h-[30vw] flex justify-center items-center">
+      <div className="w-[35vw] h-full flex justify-center items-center">
         {!scanned ? (
           <QrScanner
             onDecode={(result) => {

@@ -1,29 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Radio, Space, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
-import type {
-  ExpandableConfig,
-  TableRowSelection,
-} from "antd/es/table/interface";
-import { BiSortDown } from "react-icons/bi";
-import { studentsAtoms } from "@/recoil/atoms/students";
+import type { TableRowSelection } from "antd/es/table/interface";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IStudent, IStudentAttendance, IVacation } from "@/types/global";
-import {
-  MdOutlineViewDay,
-  MdTableView,
-  MdViewColumn,
-  MdViewList,
-} from "react-icons/md";
-import { FiDelete, FiEdit } from "react-icons/fi";
-import { AiOutlineDelete, AiOutlineLoading3Quarters } from "react-icons/ai";
-import { HiEye } from "react-icons/hi2";
+import { FiEdit } from "react-icons/fi";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IAttendance } from "@/types/global";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
-import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 
 interface DataType {
@@ -36,9 +23,6 @@ interface DataType {
 
 const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
-  const [rowSelection, setRowSelection] = useState<
-    TableRowSelection<IStudentAttendance> | undefined
-  >({});
   const [loader, setLoader] = useRecoilState(loaderState);
   const [ellipsis, setEllipsis] = useState(false);
   const [initLoader, setInitLoader] = useState(false);
@@ -63,7 +47,8 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       render: (data: IStudent) => {
         return <div>{data?.lastname}</div>;
       },
-      sorter: true,
+      sorter: (a, b) =>
+        a?.student?.lastname.charCodeAt(0) - b?.student?.lastname.charCodeAt(0),
     },
     {
       title: "Nom",
@@ -76,7 +61,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       title: "Post-nom",
       dataIndex: "student",
       render: (data: IStudent) => {
-        return <div>{data?.lastname}</div>;
+        return <div>{data?.middlename}</div>;
       },
     },
     {
@@ -148,12 +133,10 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       });
       if (Response) {
         setLoader(false);
-        console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
     } catch (error) {
       setLoader(false);
-      console.log(error);
     }
   };
 
@@ -189,7 +172,6 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
         centered: true,
         okType: "default",
       });
-      console.log(error);
     }
   };
 
@@ -201,7 +183,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
     loading: loader,
     size: "middle",
     showHeader: true,
-    rowSelection,
+
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
     dataSource: data[data.length - 1]?.students,
@@ -223,7 +205,12 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       <Table {...tableProps} />
       <Modal
         centered
-        title={"Modifier la présence de " + currentStudent}
+        title={
+          "Modifier la présence de " +
+          currentStudent.firstname +
+          " " +
+          currentStudent.lastname
+        }
         open={showModal1}
         width={400}
         onCancel={() => setShowModal1(false)}

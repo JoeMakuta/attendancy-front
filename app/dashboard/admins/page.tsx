@@ -17,17 +17,22 @@ import { AdminModalPortal, IAdminForm } from "@/helpers/adminModal";
 import { MdOutlineDelete } from "react-icons/md";
 import AdminModalForm from "@/components/users/modalForm";
 import { useRouter } from "next/navigation";
+import { currentUserState } from "@/recoil/atoms/currentUser";
+import { loaderState } from "@/recoil/atoms/loader";
 
 export default function Users(): JSX.Element {
   const [admins, setAdmins] = useRecoilState(usersState);
   const token = useRecoilValue(getAccessTokenSelector);
-  const router = useRouter()
-  const currentUser = useRecoilValue(getCurrentUserSelector);
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+  const user = useRecoilValue(getCurrentUserSelector);
+  const [loader, setLoader] = useRecoilState(loaderState);
   const [adminModal, setAdminModal] = useState<IAdminForm>({
     form: {
       name: "",
       email: "",
       password: "",
+      newPassword: "",
       confirmPassword: "",
     },
     action: "Ajouter un administrateur",
@@ -44,6 +49,7 @@ export default function Users(): JSX.Element {
 
   useEffect(() => {
     const getAdmins = async () => {
+      setLoader(true);
       try {
         const response: AxiosResponse<
           IResponse<{ name: string; email: string; _id: string }[]>
@@ -57,10 +63,11 @@ export default function Users(): JSX.Element {
           content: "Une erreur est survenu lors de la suppression!",
         });
       }
+      setLoader(false);
     };
 
     getAdmins();
-  }, [setAdmins, token, adminModal.showModal]);
+  }, [setAdmins, token, adminModal.showModal, setLoader]);
 
   const columns: ColumnsType<{
     _id: string;
@@ -99,11 +106,17 @@ export default function Users(): JSX.Element {
       </div>
 
       <div className="w-full">
-        <AdminModalForm adminModalForm={adminModalPortal} />
+        <AdminModalForm
+          router={router}
+          currentUser={currentUser}
+          userStateSetter={setCurrentUser}
+          adminModalForm={adminModalPortal}
+        />
         <Table
           columns={columns}
           scroll={{ y: "50vh" }}
-          dataSource={admins.filter((el) => el.name != currentUser.name)}
+          loading={loader}
+          dataSource={admins.filter((el) => el.name != user.name)}
         />
         <div className="w-full">
           <h1 className=" font-bold text-2xl ">Moi</h1>
@@ -129,7 +142,6 @@ export default function Users(): JSX.Element {
                             email: record.email,
                           },
                         });
-                        console.log(record);
                       }}
                       className=" text-main_color  hover:bg-white hover:text-red-600 "
                     >
@@ -148,7 +160,6 @@ export default function Users(): JSX.Element {
                             email: record.email,
                           },
                         });
-                        console.log(record);
                       }}
                       className=" text-amber-500 flex items-center justify-center gap-1  hover:bg-white hover:text-red-600 "
                     >
@@ -157,8 +168,7 @@ export default function Users(): JSX.Element {
                     <Button
                       onClick={() =>
                         adminModalPortal.deleteAccount(
-                          admins.filter((el) => el.name == currentUser.name)[0]
-                            ._id,
+                          admins.filter((el) => el.name == user.name)[0]._id,
                           token,
                           router
                         )
@@ -171,7 +181,8 @@ export default function Users(): JSX.Element {
                 ),
               },
             ]}
-            dataSource={admins.filter((el) => el.name == currentUser.name)}
+            dataSource={admins.filter((el) => el.name == user.name)}
+            loading={loader}
           />
         </div>
       </div>

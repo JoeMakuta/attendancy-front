@@ -11,8 +11,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 const PresencePage = () => {
   const currentUser = useRecoilValue(currentUserState);
-  const [date, setDate] = useState<string>(new Date().toDateString());
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
+  const [date, setDate] = useState<string>("");
   const [loader, setLoader] = useRecoilState<boolean>(loaderState);
 
   const getAllAttendance = async () => {
@@ -24,42 +24,53 @@ const PresencePage = () => {
       });
       if (Response) {
         setLoader(false);
-        console.log("All Attendances = ", Response.data?.data);
         await setAttendances(Response.data?.data);
       }
     } catch (error) {
       setLoader(false);
-      console.log(error);
     }
   };
 
   const onChange: DatePickerProps["onChange"] = (value, dateString) => {
     setDate(new Date(dateString).toDateString());
   };
-  // const yesterday = new Date().setDate(new Date().getDate() - 1);
 
   useEffect(() => {
     getAllAttendance();
   }, [currentUser]);
 
   return (
-    <section className=" flex flex-col gap-5 ">
-      <h1 className=" font-bold text-2xl ">Listes de présences</h1>
-      <div className=" flex gap-6 justify-start items-center">
-        <h2>Selectionner une date : </h2>
-        <DatePicker
-          placeholder="Selectionner une date"
-          format={"YYYY-MM-DD"}
-          onChange={onChange}
-          className="w-[200px]"
-          size="large"
-          disabledDate={(currentDate) => currentDate > dayjs().endOf("day")}
-        />
+    <section className=" flex w-full flex-col gap-5 ">
+      <div className=" flex justify-between w-full ">
+        <h1 className=" font-bold text-2xl ">Listes de présences</h1>
+        <div className=" flex gap-6 justify-start items-center">
+          <h2>Filtrer par date : </h2>
+          <DatePicker
+            placeholder={attendances[attendances.length - 1]?.date.slice(0, 10)}
+            format={"YYYY-MM-DD"}
+            onChange={onChange}
+            className="w-[200px]"
+            size="large"
+            disabledDate={(currentDate) => currentDate > dayjs().endOf("day")}
+          />
+        </div>
       </div>
       <h1 className=" font-bold ">Avant-midi </h1>
-      <RepportTable vac={"AV"} date={date} />
+      <RepportTable
+        vac={"AV"}
+        date={
+          date ||
+          new Date(attendances[attendances.length - 1]?.date).toDateString()
+        }
+      />
       <h1 className=" font-bold ">Après-midi </h1>
-      <RepportTable vac={"AP"} date={date} />
+      <RepportTable
+        vac={"AP"}
+        date={
+          date ||
+          new Date(attendances[attendances.length - 1]?.date).toDateString()
+        }
+      />
     </section>
   );
 };

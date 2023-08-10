@@ -1,16 +1,12 @@
 "use client";
-import RepportTable from "@/components/dashboard/repportTable";
 import NewStudentForm from "@/components/students/newStudent";
 import StudentRepportTable from "@/components/students/studentRepportTable";
-import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 import { loaderState } from "@/recoil/atoms/loader";
 import { studentsAtoms } from "@/recoil/atoms/students";
-import { Button, Modal } from "antd";
-import Link from "next/link";
+import { Modal } from "antd";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { useRecoilState } from "recoil";
 
