@@ -29,7 +29,7 @@ const StudentRepportTable = () => {
   const [students, setStudents] = useRecoilState(studentsAtoms);
   const currentUser = useRecoilValue(currentUserState);
   const [loader, setLoader] = useRecoilState<boolean>(loaderState);
-  
+
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
@@ -178,7 +178,10 @@ const StudentRepportTable = () => {
     {
       title: "Prénom",
       dataIndex: "lastname",
-      sorter: (a, b) => a.lastname.charCodeAt(0) - b.lastname.charCodeAt(0),
+      defaultSortOrder: "ascend",
+      sorter: (a, b) =>
+        a?.lastname.toLowerCase().charCodeAt(0) -
+        b?.lastname.toLowerCase().charCodeAt(0),
     },
     {
       title: "Nom",
