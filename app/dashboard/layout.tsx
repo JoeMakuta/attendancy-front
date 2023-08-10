@@ -86,11 +86,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             <p className=" text-xs ">{path}</p>
           </div>
           <div className=" flex gap-4 justify-center items-center">
-            <Input.Search
+            {/* <Input.Search
               size="large"
               style={{ width: "500px" }}
               placeholder="Recherchez ici ..."
-            />
+            /> */}
 
             <ProfilMenu />
           </div>

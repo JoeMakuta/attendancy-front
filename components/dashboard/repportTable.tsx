@@ -47,8 +47,10 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       render: (data: IStudent) => {
         return <div>{data?.lastname}</div>;
       },
+      defaultSortOrder: "ascend",
       sorter: (a, b) =>
-        a?.student?.lastname.charCodeAt(0) - b?.student?.lastname.charCodeAt(0),
+        a?.student?.lastname.toLowerCase().charCodeAt(0) -
+        b?.student?.lastname.toLowerCase().charCodeAt(0),
     },
     {
       title: "Nom",
