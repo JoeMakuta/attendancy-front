@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, QRCode, Table, Tag } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
-import type {
-  TableRowSelection,
-} from "antd/es/table/interface";
+import type { TableRowSelection } from "antd/es/table/interface";
 import { studentsAtoms } from "@/recoil/atoms/students";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IStudent } from "@/types/global";
 import { FiEdit } from "react-icons/fi";
-import {
-  AiOutlineDelete,
-  AiOutlineLoading3Quarters,
-} from "react-icons/ai";
-import {  HiEye } from "react-icons/hi2";
+import { AiOutlineDelete, AiOutlineLoading3Quarters } from "react-icons/ai";
+import { HiEye } from "react-icons/hi2";
 import { Modal } from "antd";
 import { ApiClient } from "@/helpers/apiClient";
 import { currentUserState } from "@/recoil/atoms/currentUser";
@@ -34,9 +29,7 @@ const StudentRepportTable = () => {
   const [students, setStudents] = useRecoilState(studentsAtoms);
   const currentUser = useRecoilValue(currentUserState);
   const [loader, setLoader] = useRecoilState<boolean>(loaderState);
-  const [rowSelection, setRowSelection] = useState<
-    TableRowSelection<IStudent> | undefined
-  >({});
+  
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
@@ -54,7 +47,7 @@ const StudentRepportTable = () => {
 
   const [ellipsis, setEllipsis] = useState(false);
 
-  const getAllStudents = async () => {
+  const getAllStudents = useCallback(async () => {
     try {
       setLoader(true);
       const Response = await ApiClient.get({
@@ -68,13 +61,12 @@ const StudentRepportTable = () => {
       setLoader(false);
     } catch (error) {
       setLoader(false);
-
     }
-  };
+  }, [currentUser, setLoader, setStudents]);
 
   useEffect(() => {
     getAllStudents();
-  }, []);
+  }, [getAllStudents]);
 
   const showDeleteConfirm = (id: string) => {
     confirm({
@@ -186,7 +178,7 @@ const StudentRepportTable = () => {
     {
       title: "Prénom",
       dataIndex: "lastname",
-      sorter: true,
+      sorter: (a, b) => a.lastname.charCodeAt(0) - b.lastname.charCodeAt(0),
     },
     {
       title: "Nom",
@@ -263,7 +255,6 @@ const StudentRepportTable = () => {
     loading: loader,
     size: "middle",
     showHeader: true,
-    rowSelection,
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
     dataSource: students,

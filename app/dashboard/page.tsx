@@ -4,7 +4,7 @@ import RepportTable from "@/components/dashboard/repportTable";
 import { currentUserState } from "@/recoil/atoms/currentUser";
 
 import { Button, Card, Modal, Radio, message } from "antd";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
@@ -40,31 +40,40 @@ const Dashboard: React.FC = () => {
   const router = useRouter();
   const [loader, setLoader] = useRecoilState<boolean>(loaderState);
 
-  const [numberPresence, setNumberPresence] = useState<IStudentAttendance[]>(
-    attendances[attendances.length - 1]?.students.filter(
-      (elt) => elt.status == "PRESENT"
-    )
-  );
-  const [numberAbsence, setNumberAbsence] = useState<IStudentAttendance[]>(
-    attendances[attendances.length - 1]?.students.filter(
-      (elt) => elt.status == "ABSENT"
-    )
+  const countAttendances = useCallback(
+    (status: "ABSENT" | "PRESENT") => {
+      return (
+        attendances[attendances.length - 1]?.students.filter(
+          (elt) => elt.status == status
+        ).length +
+        attendances[attendances.length - 2]?.students.filter(
+          (elt) => elt.status == status
+        ).length
+      );
+    },
+    [attendances]
   );
 
+  const [numberPresence, setNumberPresence] = useState<number>(
+    countAttendances("PRESENT")
+  );
+  const [numberAbsence, setNumberAbsence] = useState<number>(
+    countAttendances("ABSENT")
+  );
   const cards: ICard[] = [
     {
       icon: <FiArrowUp />,
       status: true,
       suffix: "%",
       title: "Présences",
-      value: ((numberPresence?.length * 100) / students?.length) | 0,
+      value: ((numberPresence * 100) / students?.length) | 0,
     },
     {
       icon: <FiArrowDown />,
       status: false,
       suffix: "%",
       title: "Absences",
-      value: ((numberAbsence?.length * 100) / students?.length) | 0,
+      value: ((numberAbsence * 100) / students?.length) | 0,
     },
     {
       icon: <PiStudent />,
@@ -112,7 +121,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const getAllAttendance = async () => {
+  const getAllAttendance = useCallback(async () => {
     try {
       setLoader(true);
       const Response = await ApiClient.get({
@@ -126,22 +135,17 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       setLoader(false);
     }
-  };
+  }, [currentUser, setAttendances, setLoader]);
   // const yesterday = new Date().setDate(new Date().getDate() - 1);
 
   useEffect(() => {
     getAllAttendance();
-    setNumberPresence(
-      attendances[attendances?.length - 1]?.students.filter(
-        (elt) => elt.status == "PRESENT"
-      )
-    );
-    setNumberAbsence(
-      attendances[attendances?.length - 1]?.students.filter(
-        (elt) => elt.status == "ABSENT"
-      )
-    );
-  }, [currentUser]);
+  }, [getAllAttendance]);
+
+  useEffect(() => {
+    setNumberPresence(countAttendances("PRESENT"));
+    setNumberAbsence(countAttendances("ABSENT"));
+  }, [countAttendances]);
 
   return (
     <div className="flex gap-6 flex-col  w-full ">

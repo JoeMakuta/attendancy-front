@@ -29,7 +29,6 @@ const Scanner = () => {
       }
     } catch (error) {
       setLoader(false);
-
     }
   };
 
@@ -64,7 +63,7 @@ const Scanner = () => {
 
   return (
     <div className=" w-full h-full flex justify-center items-center ">
-      <div className="w-[30vw] h-[30vw] flex justify-center items-center">
+      <div className="w-[35vw] h-full flex justify-center items-center">
         {!scanned ? (
           <QrScanner
             onDecode={(result) => {

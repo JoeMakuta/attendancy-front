@@ -23,9 +23,6 @@ interface DataType {
 
 const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
   const [attendances, setAttendances] = useRecoilState(attendacesAtom);
-  const [rowSelection, setRowSelection] = useState<
-    TableRowSelection<IStudentAttendance> | undefined
-  >({});
   const [loader, setLoader] = useRecoilState(loaderState);
   const [ellipsis, setEllipsis] = useState(false);
   const [initLoader, setInitLoader] = useState(false);
@@ -50,7 +47,8 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       render: (data: IStudent) => {
         return <div>{data?.lastname}</div>;
       },
-      sorter: true,
+      sorter: (a, b) =>
+        a?.student?.lastname.charCodeAt(0) - b?.student?.lastname.charCodeAt(0),
     },
     {
       title: "Nom",
@@ -63,7 +61,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
       title: "Post-nom",
       dataIndex: "student",
       render: (data: IStudent) => {
-        return <div>{data?.lastname}</div>;
+        return <div>{data?.middlename}</div>;
       },
     },
     {
@@ -185,7 +183,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
     loading: loader,
     size: "middle",
     showHeader: true,
-    rowSelection,
+
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
     dataSource: data[data.length - 1]?.students,
