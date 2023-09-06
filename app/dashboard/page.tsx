@@ -66,14 +66,14 @@ const Dashboard: React.FC = () => {
       status: true,
       suffix: "%",
       title: "Présences",
-      value: ((numberPresence * 100) / students?.length) | 0,
+      value: ((numberPresence * 100) / (attendances[attendances.length - 1]?.students.length + attendances[attendances.length - 2]?.students.length)) | 0,
     },
     {
       icon: <FiArrowDown />,
       status: false,
       suffix: "%",
       title: "Absences",
-      value: ((numberAbsence * 100) / students?.length) | 0,
+      value: ((numberAbsence * 100) / (attendances[attendances.length - 1]?.students.length + attendances[attendances.length - 2]?.students.length)) | 0,
     },
     {
       icon: <PiStudent />,
@@ -230,7 +230,7 @@ const Dashboard: React.FC = () => {
                   className="animate-spin"
                 />
               )}
-              <span>Ok</span>{" "}
+              <span>Oui</span>{" "}
             </button>
           </div>,
         ]}

@@ -57,6 +57,9 @@ const Scanner = () => {
         content: "La présence n'a pas pu étre enregistré!",
         centered: true,
         okType: "default",
+        onOk: () => {
+          setScanned(false);
+        },
       });
     }
   };
