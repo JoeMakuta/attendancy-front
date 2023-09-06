@@ -76,8 +76,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           </svg>
         </div>
       ) : null} */}
-      <div className="w-screen relative bg-white h-screen grid grid-cols-[270px_1fr] grid-rows-[80px_1fr]">
-        <header className="flex  gap-4 border-l-[1px] border-b-[1px]  border-main_color/20 px-5 py-2 items-center w-full justify-between h-20 bg-white">
+      <div className="w-screen relative bg-white h-screen grid grid-cols-[70px_1fr]  md:grid-cols-[270px_1fr] grid-rows-[80px_1fr]">
+        <header className="flex  gap-4 border-l-[1px] border-b-[1px]  border-main_color/20 px-5 py-2 items-center md:w-full justify-between h-20 bg-white">
           <div>
             <h1 className=" font-bold  ">
               Bienvenu {currentUser?.user?.name[0]?.toUpperCase()}

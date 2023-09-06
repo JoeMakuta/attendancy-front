@@ -28,8 +28,10 @@ const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
 
   return (
-    <ul className="flex gap-4 flex-col w-full text-black pt-4 ">
-      <PiStudentFill size={"100"} className="text-main_color self-center " />
+    <ul className="flex gap-4 flex-col md:w-full text-black pt-4 ">
+      <div className="text-main_color hidden md:block md:text-[100px] self-center ">
+        <PiStudentFill />
+      </div>
       {Menus.map((elt, index) => {
         return (
           <Link
@@ -54,7 +56,7 @@ const Menu = () => {
                   selectedMenu == elt.name ? "" : "text-main_color"
                 }`,
               })}
-              <span>{elt.name}</span>
+              <span className="hidden md:block">{elt.name}</span>
             </li>
           </Link>
         );
