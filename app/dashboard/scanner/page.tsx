@@ -1,10 +1,10 @@
 "use client";
-
+import React from "react";
 import { ApiClient } from "@/helpers/apiClient";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
 import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
-import { QrScanner } from "@yudiel/react-qr-scanner";
+import QrReader from "react-qr-scanner";
 import { Modal } from "antd";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -42,7 +42,7 @@ const Scanner = () => {
       if (Response) {
         Modal.success({
           title: "Success",
-          content: "Présence enregistré avec success!",
+          content: `La présence de ${Response?.data?.message} a été enregistré avec success!`,
           centered: true,
           okType: "default",
           onOk: () => {
@@ -68,10 +68,13 @@ const Scanner = () => {
     <div className=" w-full h-full flex justify-center items-center ">
       <div className="md:w-[35vw] w-full h-full flex justify-center md:items-center items-start ">
         {!scanned ? (
-          <QrScanner
-            onDecode={(result) => {
-              setScanned(true);
-              addPresence(result);
+          <QrReader
+            onScan={(result) => {
+              if (result) {
+                setScanned(true);
+                console.log(result);
+                addPresence(result?.text);
+              }
             }}
             onError={(error) =>
               Modal.error({

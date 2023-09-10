@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@types/node':
     specifier: 20.3.2
@@ -10,9 +14,6 @@ dependencies:
   '@types/react-dom':
     specifier: 18.2.6
     version: 18.2.6
-  '@yudiel/react-qr-scanner':
-    specifier: ^1.1.9
-    version: 1.1.9(react-dom@18.2.0)(react@18.2.0)
   antd:
     specifier: ^5.6.3
     version: 5.6.3(react-dom@18.2.0)(react@18.2.0)
@@ -46,6 +47,9 @@ dependencies:
   react-icons:
     specifier: ^4.10.1
     version: 4.10.1(react@18.2.0)
+  react-qr-scanner:
+    specifier: 1.0.0-alpha.11
+    version: 1.0.0-alpha.11(react-dom@18.2.0)(react@18.2.0)
   recoil:
     specifier: ^0.7.7
     version: 0.7.7(react-dom@18.2.0)(react@18.2.0)
@@ -556,19 +560,8 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: false
 
-  /@yudiel/react-qr-scanner@1.1.9(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-yJkSMEPE5vqirSMz6NKtK0wvjyRun2BTcstEuVyieKKNdGMtCf7o5PudWeILfRevpBhFmFlqeCEviuow13yuLw==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@zxing/library': 0.20.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@zxing/library@0.20.0:
-    resolution: {integrity: sha512-6Ev6rcqVjMakZFIDvbUf0dtpPGeZMTfyxYg4HkVWioWeN7cRcnUWT3bU6sdohc82O1nPXcjq6WiGfXX2Pnit6A==}
+  /@zxing/library@0.19.3:
+    resolution: {integrity: sha512-RUv5svewpDoD0ymXleOP8yVTO5BLkR0zn5coGC/Vs1671u0OBJ4xdtR8WVWf08OcvrieEMHdSfQY3ZKtqII/hg==}
     engines: {node: '>= 10.4.0'}
     dependencies:
       ts-custom-error: 3.3.1
@@ -3070,6 +3063,18 @@ packages:
 
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+    dev: false
+
+  /react-qr-scanner@1.0.0-alpha.11(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-TdaygL+4U9iapskJgK5Ilb1Cw4wwzQ3bVpIfzzbrEsxPaEJzmjQ7VuMz8E9hBQGCU4Ee+YtgglE3byEtgtRpkA==}
+    peerDependencies:
+      react: ^17.0.0 || ^18.0.0
+      react-dom: ^17.0.0 || ^18.0.0
+    dependencies:
+      '@zxing/library': 0.19.3
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react@18.2.0:
