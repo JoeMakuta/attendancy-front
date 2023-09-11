@@ -4,7 +4,7 @@ import { ApiClient } from "@/helpers/apiClient";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
 import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
-import QrReader from "react-qr-scanner";
+import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Modal } from "antd";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -68,22 +68,25 @@ const Scanner = () => {
     <div className=" w-full h-full flex justify-center items-center ">
       <div className="md:w-[35vw] w-full h-full flex justify-center md:items-center items-start ">
         {!scanned ? (
-          <QrReader
-            onScan={(result) => {
-              if (result) {
+          <QrScanner
+            constraints={{ facingMode: "environment" }}
+            onDecode={(result) => {
+              if (!!result) {
                 setScanned(true);
                 console.log(result);
-                addPresence(result?.text);
+                addPresence(result);
               }
             }}
-            onError={(error) =>
+            onError={(error) => {
+              console.log(error);
+
               Modal.error({
                 title: "Erreur",
-                content: error?.message,
+                content: error.message,
                 centered: true,
                 okType: "default",
-              })
-            }
+              });
+            }}
           />
         ) : (
           <div>Loading ...</div>
