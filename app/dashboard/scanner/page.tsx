@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { ApiClient } from "@/helpers/apiClient";
 import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
@@ -42,7 +42,7 @@ const Scanner = () => {
       if (Response) {
         Modal.success({
           title: "Success",
-          content: "Présence enregistré avec success!",
+          content: `La présence de ${Response?.data?.message} a été enregistré avec success!`,
           centered: true,
           okType: "default",
           onOk: () => {
@@ -69,18 +69,24 @@ const Scanner = () => {
       <div className="md:w-[35vw] w-full h-full flex justify-center md:items-center items-start ">
         {!scanned ? (
           <QrScanner
+            constraints={{ facingMode: "environment" }}
             onDecode={(result) => {
-              setScanned(true);
-              addPresence(result);
+              if (!!result) {
+                setScanned(true);
+                console.log(result);
+                addPresence(result);
+              }
             }}
-            onError={(error) =>
+            onError={(error) => {
+              console.log(error);
+
               Modal.error({
                 title: "Erreur",
-                content: error?.message,
+                content: error.message,
                 centered: true,
                 okType: "default",
-              })
-            }
+              });
+            }}
           />
         ) : (
           <div>Loading ...</div>
