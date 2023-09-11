@@ -5,6 +5,7 @@ import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
 import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
 import { QrScanner } from "@yudiel/react-qr-scanner";
+import { QrReader } from "react-qr-reader";
 import { Modal } from "antd";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -89,6 +90,26 @@ const Scanner = () => {
             }}
           />
         ) : (
+          // <QrReader
+          //   constraints={{ facingMode: "environment" }}
+          //   onResult={(result, error) => {
+          //     if (!!result) {
+          //       setScanned(true);
+          //       console.log(result);
+          //       addPresence(result.getText());
+          //     }
+          //     if (error) {
+          //       console.log(error);
+
+          //       Modal.error({
+          //         title: "Erreur",
+          //         content: error.message,
+          //         centered: true,
+          //         okType: "default",
+          //       });
+          //     }
+          //   }}
+          // />
           <div>Loading ...</div>
         )}
       </div>
