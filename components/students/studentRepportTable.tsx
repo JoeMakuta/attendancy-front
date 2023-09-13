@@ -261,7 +261,7 @@ const StudentRepportTable = () => {
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
     dataSource: students,
-    scroll: { y: "60vh" },
+    scroll: { y: "100%" },
   };
 
   return (

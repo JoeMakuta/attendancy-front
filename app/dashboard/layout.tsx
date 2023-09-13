@@ -12,12 +12,14 @@ import { studentsAtoms } from "@/recoil/atoms/students";
 import { Input } from "antd";
 import Search from "antd/es/input/Search";
 import { loaderState } from "@/recoil/atoms/loader";
+import { attendacesAtom } from "@/recoil/atoms/attendance";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const path = usePathname();
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const [students, setStudents] = useRecoilState(studentsAtoms);
+  const [attendances, setAttendances] = useRecoilState(attendacesAtom);
   const [loader, setLoader] = useRecoilState<boolean>(loaderState);
 
   const getAllStudents = async () => {
@@ -86,11 +88,14 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             <p className=" text-xs ">{path}</p>
           </div>
           <div className=" flex gap-4 justify-center items-center">
-            {/* <Input.Search
+            <Input.Search
               size="large"
-              style={{ width: "500px" }}
+              className="w-[200px] sm:w-[300px] "
               placeholder="Recherchez ici ..."
-            /> */}
+              onChange={(e) => {
+                console.log(e.target.value);
+              }}
+            />
 
             <ProfilMenu />
           </div>

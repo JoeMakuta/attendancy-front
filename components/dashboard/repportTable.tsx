@@ -189,7 +189,7 @@ const RepportTable = ({ vac, date }: { vac: "AP" | "AV"; date: string }) => {
     pagination: { position: ["bottomRight"] },
     columns: tableColumns,
     dataSource: data[data.length - 1]?.students,
-    scroll: { y: "60vh" },
+    scroll: { y: "100%" },
     // rowClassName : (record) => record.student?
   };
 
