@@ -5,7 +5,7 @@ import { attendacesAtom } from "@/recoil/atoms/attendance";
 import { loaderState } from "@/recoil/atoms/loader";
 import { getAccessTokenSelector } from "@/recoil/selectors/currentUser/accessToken";
 import { QrScanner } from "@yudiel/react-qr-scanner";
-import { QrReader } from "react-qr-reader";
+// import { QrReader } from "react-qr-reader";
 import { Modal } from "antd";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -41,7 +41,7 @@ const Scanner = () => {
         token,
       });
       if (Response) {
-        Modal.success({
+        const modal_instance = Modal.success({
           title: "Success",
           content: `La présence de ${Response?.data?.message} a été enregistré avec success!`,
           centered: true,
@@ -50,6 +50,10 @@ const Scanner = () => {
             setScanned(false);
           },
         });
+        setTimeout(() => {
+          modal_instance.destroy();
+          setScanned(false);
+        }, 1000);
         await getAllAttendance();
       }
     } catch (error) {
@@ -71,7 +75,7 @@ const Scanner = () => {
         {!scanned ? (
           <QrScanner
             constraints={{ facingMode: "environment" }}
-            onDecode={(result) => {
+            onDecode={async (result) => {
               if (!!result) {
                 setScanned(true);
                 console.log(result);
